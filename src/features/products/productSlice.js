@@ -5,6 +5,7 @@ const initialState = {
   items: products,
   searchQuery: '',
   selectedCategory: 'all',
+  sortBy: 'default',
   minPrice: 0,
   maxPrice: Number.MAX_SAFE_INTEGER,
 }
@@ -18,6 +19,9 @@ const productsSlice = createSlice({
     },
     setSelectedCategory: (state, action) => {
       state.selectedCategory = action.payload
+    },
+    setSortBy: (state, action) => {
+      state.sortBy = action.payload
     },
     setPriceRange: (state, action) => {
       state.minPrice = action.payload.minPrice
@@ -46,6 +50,7 @@ const productsSlice = createSlice({
 export const {
   setSearchQuery,
   setSelectedCategory,
+  setSortBy,
   setPriceRange,
   addProduct,
   updateProduct,
@@ -78,10 +83,10 @@ export const selectRelatedProducts = (state, currentProductId, categoryKey) =>
   )
 
 export const selectFilteredProducts = (state) => {
-  const { items, searchQuery, selectedCategory, minPrice, maxPrice } =
+  const { items, searchQuery, selectedCategory, sortBy, minPrice, maxPrice } =
     state.products
 
-  return items.filter((product) => {
+  let result = items.filter((product) => {
     const query = searchQuery.toLowerCase()
 
     const matchesQuery =
@@ -99,4 +104,17 @@ export const selectFilteredProducts = (state) => {
 
     return matchesQuery && matchesCategory && matchesPrice
   })
+
+  // Apply sorting
+  if (sortBy === 'price-asc') {
+    result = [...result].sort((a, b) => a.price - b.price)
+  } else if (sortBy === 'price-desc') {
+    result = [...result].sort((a, b) => b.price - a.price)
+  } else if (sortBy === 'rating') {
+    result = [...result].sort((a, b) => b.rating - a.rating)
+  } else if (sortBy === 'newest') {
+    result = [...result].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0))
+  }
+
+  return result
 }

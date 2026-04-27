@@ -1,7 +1,7 @@
 // src/pages/public/ProductListPage.jsx
 
 import { useSelector, useDispatch } from 'react-redux'
-import { selectFilteredProducts } from '../../features/products/productSlice'
+import { selectFilteredProducts, setSortBy } from '../../features/products/productSlice'
 import { setSearchQuery, setSelectedCategory } from '../../features/products/productSlice'
 import ProductCard from '../../components/product/ProductCard'
 
@@ -12,10 +12,12 @@ const ProductListPage = () => {
   const categories       = useSelector(s => s.categories.items)
   const searchQuery      = useSelector(s => s.products.searchQuery)
   const selectedCategory = useSelector(s => s.products.selectedCategory)
+  const sortBy           = useSelector(s => s.products.sortBy)
 
   const clearAll = () => {
     dispatch(setSearchQuery(''))
     dispatch(setSelectedCategory('all'))
+    dispatch(setSortBy('default'))
   }
 
   return (
@@ -68,10 +70,21 @@ const ProductListPage = () => {
               </button>
             ))}
           </div>
+          <select
+            value={sortBy}
+            onChange={e => dispatch(setSortBy(e.target.value))}
+            className="px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+          >
+            <option value="default">Sort: Default</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Best Rated</option>
+            <option value="newest">Newest First</option>
+          </select>
         </div>
 
         {/* Active filter chips */}
-        {(searchQuery || selectedCategory !== 'all') && (
+        {(searchQuery || selectedCategory !== 'all' || sortBy !== 'default') && (
           <div className="flex items-center gap-2 mb-6 flex-wrap">
             <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">Active filters:</span>
             {searchQuery && (
@@ -84,6 +97,12 @@ const ProductListPage = () => {
               <span className="flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-xs px-3 py-1 rounded-full font-medium">
                 {categories.find(c => c.id === selectedCategory)?.label}
                 <button onClick={() => dispatch(setSelectedCategory('all'))} className="ml-1 hover:text-amber-900 dark:hover:text-amber-300">✕</button>
+              </span>
+            )}
+            {sortBy !== 'default' && (
+              <span className="flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-xs px-3 py-1 rounded-full font-medium">
+                Sorted
+                <button onClick={() => dispatch(setSortBy('default'))} className="ml-1 hover:text-amber-900 dark:hover:text-amber-300">✕</button>
               </span>
             )}
             <button onClick={clearAll} className="text-xs text-stone-400 hover:text-red-500 underline transition">Clear all</button>
