@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ThemeSwitcherToggle } from "./ui/theme-switch-toggler";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
@@ -418,12 +421,24 @@ const NavIcon = ({ type }) => {
 export default function Navbar({
   isLoggedIn = false,
   userName = "Alex",
-  favCount = 3,
   activePage = "home",
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const navRef = useRef(null);
+
+  // Get favorites count from Redux
+  const userId = 'user-1'; // TODO: Get from auth when implemented
+  const favCount = useSelector(s => s.favorites.items.filter(f => f.userId === userId).length);
+
+  // Determine active page from location
+  const currentPage = location.pathname === '/' ? 'home' 
+    : location.pathname.startsWith('/products') ? 'products'
+    : location.pathname === '/favorites' ? 'favorites'
+    : location.pathname === '/about' ? 'about'
+    : activePage;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -452,31 +467,34 @@ export default function Navbar({
       icon: "grid",
       color: "rgba(250, 204, 21, 0.14)",
       iconColor: "#facc15",
+      onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
     {
       label: "New Arrivals",
       icon: "star",
       color: "rgba(250, 204, 21, 0.14)",
       iconColor: "#facc15",
+      onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
     {
       label: "Featured",
       icon: "heart",
       color: "rgba(250, 204, 21, 0.14)",
       iconColor: "#facc15",
+      onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
   ];
 
   const userLinks = isLoggedIn
     ? [
-        { label: "My Profile", icon: "user" },
-        { label: "My Orders", icon: "grid" },
+        { label: "My Profile", icon: "user", onClick: () => { navigate('/profile'); setOpenDropdown(null); } },
+        { label: "My Orders", icon: "grid", onClick: () => { navigate('/orders'); setOpenDropdown(null); } },
         { label: "divider" },
-        { label: "Log Out", icon: "logout", danger: true },
+        { label: "Log Out", icon: "logout", danger: true, onClick: () => { console.log('Logout'); setOpenDropdown(null); } },
       ]
     : [
-        { label: "Log In", icon: "login" },
-        { label: "Sign Up", icon: "signup" },
+        { label: "Log In", icon: "login", onClick: () => { navigate('/login'); setOpenDropdown(null); } },
+        { label: "Sign Up", icon: "signup", onClick: () => { navigate('/signup'); setOpenDropdown(null); } },
       ];
 
   return (
@@ -491,7 +509,7 @@ export default function Navbar({
         <div className={`fnb-inner${scrolled ? " scrolled" : ""}`}>
           <div className="fnb-glow-line" />
 
-          <a href="/" className="fnb-logo" aria-label="VizCraft">
+          <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }} className="fnb-logo" aria-label="VizCraft">
             <div className="fnb-logo-icon">◈</div>
             <span className="fnb-logo-text">
               Viz<span>Craft</span>
@@ -500,23 +518,23 @@ export default function Navbar({
 
           <ul className="fnb-nav" role="menubar">
             <li className="fnb-nav-item" role="none">
-              <a
-                href="/"
+              <button
+                onClick={() => navigate('/')}
                 className={`fnb-nav-link${
-                  activePage === "home" ? " active" : ""
+                  currentPage === "home" ? " active" : ""
                 }`}
                 role="menuitem"
               >
                 <NavIcon type="home" />
                 Home
-              </a>
+              </button>
             </li>
 
             <li className="fnb-nav-item" role="none">
               <button
                 className={`fnb-nav-link${
                   openDropdown === "products" ? " open" : ""
-                }${activePage === "products" ? " active" : ""}`}
+                }${currentPage === "products" ? " active" : ""}`}
                 onClick={() => toggle("products")}
                 aria-haspopup="true"
                 aria-expanded={openDropdown === "products"}
@@ -534,14 +552,11 @@ export default function Navbar({
                 role="menu"
               >
                 {productCategories.map((item) => (
-                  <a
+                  <button
                     key={item.label}
-                    href={`/products/${item.label
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}`}
                     className="fnb-dropdown-item"
                     role="menuitem"
-                    onClick={() => setOpenDropdown(null)}
+                    onClick={item.onClick}
                   >
                     <span
                       className="fnb-dropdown-icon"
@@ -553,16 +568,16 @@ export default function Navbar({
                       <NavIcon type={item.icon} />
                     </span>
                     {item.label}
-                  </a>
+                  </button>
                 ))}
               </div>
             </li>
 
             <li className="fnb-nav-item" role="none">
-              <a
-                href="/favorites"
+              <button
+                onClick={() => navigate('/favorites')}
                 className={`fnb-fav-btn${
-                  activePage === "favorites" ? " active" : ""
+                  currentPage === "favorites" ? " active" : ""
                 }`}
                 aria-label={`Favorites, ${favCount} items`}
                 role="menuitem"
@@ -574,20 +589,20 @@ export default function Navbar({
                     {favCount}
                   </span>
                 )}
-              </a>
+              </button>
             </li>
 
             <li className="fnb-nav-item" role="none">
-              <a
-                href="/about"
+              <button
+                onClick={() => navigate('/about')}
                 className={`fnb-nav-link${
-                  activePage === "about" ? " active" : ""
+                  currentPage === "about" ? " active" : ""
                 }`}
                 role="menuitem"
               >
                 <NavIcon type="about" />
                 About
-              </a>
+              </button>
             </li>
 
             <li className="fnb-nav-item" role="none">
@@ -642,7 +657,7 @@ export default function Navbar({
                         item.danger ? " danger" : ""
                       }`}
                       role="menuitem"
-                      onClick={() => setOpenDropdown(null)}
+                      onClick={item.onClick}
                     >
                       <span
                         className="fnb-dropdown-icon"
@@ -659,6 +674,13 @@ export default function Navbar({
                     </button>
                   )
                 )}
+              </div>
+            </li>
+
+            {/* Theme Toggle */}
+            <li className="fnb-nav-item" role="none" style={{ marginLeft: '8px' }}>
+              <div className="fnb-nav-link" style={{ padding: '8px 10px' }}>
+                <ThemeSwitcherToggle />
               </div>
             </li>
           </ul>
