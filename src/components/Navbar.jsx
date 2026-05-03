@@ -35,12 +35,12 @@ const styles = `
     padding: 0 28px;
     height: 60px;
     border-radius: 100px;
-    border: 1px solid rgba(250, 204, 21, 0.3);
-    background: #000;
+    border: 1px solid rgba(153, 85, 255, 0.35);
+    background: #09070f;
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.8),
-      0 0 18px rgba(250, 204, 21, 0.18),
-      0 1px 0 rgba(250, 204, 21, 0.18) inset;
+      0 8px 32px rgba(0, 0, 0, 0.85),
+      0 0 18px rgba(153, 85, 255, 0.2),
+      0 1px 0 rgba(153, 85, 255, 0.18) inset;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
     overflow: visible;
@@ -53,20 +53,20 @@ const styles = `
     border-radius: 100px;
     background: linear-gradient(
       135deg,
-      rgba(250,204,21,0.08) 0%,
-      rgba(0,0,0,0.01) 50%,
-      rgba(250,204,21,0.05) 100%
+      rgba(153,85,255,0.09) 0%,
+      rgba(9,7,15,0.01) 50%,
+      rgba(153,85,255,0.06) 100%
     );
     pointer-events: none;
   }
 
   .fnb-inner.scrolled {
     height: 54px;
-    background: #000;
+    background: #09070f;
     box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.85),
-      0 0 0 1px rgba(250, 204, 21, 0.28),
-      0 0 20px rgba(250, 204, 21, 0.22);
+      0 12px 40px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(153, 85, 255, 0.3),
+      0 0 24px rgba(153, 85, 255, 0.25);
   }
 
   .fnb-logo {
@@ -76,7 +76,7 @@ const styles = `
     letter-spacing: 0.15em;
     text-transform: uppercase;
     text-decoration: none;
-    color: #facc15;
+    color: #fffefe;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -89,18 +89,18 @@ const styles = `
     width: 28px;
     height: 28px;
     border-radius: 8px;
-    background: #facc15;
-    color: #000;
+    background: #9955ff;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    box-shadow: 0 0 14px rgba(250, 204, 21, 0.55);
+    box-shadow: 0 0 16px rgba(153, 85, 255, 0.65);
     flex-shrink: 0;
   }
 
   .fnb-logo-text span {
-    color: #facc15;
+    color: #ffffff;
   }
 
   .fnb-nav {
@@ -121,7 +121,7 @@ const styles = `
     font-size: 13.5px;
     font-weight: 500;
     letter-spacing: 0.04em;
-    color: #facc15;
+    color: #aa77ff;
     text-decoration: none;
     padding: 8px 14px;
     border-radius: 50px;
@@ -139,20 +139,20 @@ const styles = `
 
   .fnb-nav-link:hover,
   .fnb-nav-link.active {
-    color: #facc15;
-    background: rgba(250, 204, 21, 0.12);
+    color: #cc99ff;
+    background: rgba(153, 85, 255, 0.14);
   }
 
   .fnb-nav-link.active {
-    color: #facc15;
-    background: rgba(250, 204, 21, 0.14);
-    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.35) inset;
+    color: #cc99ff;
+    background: rgba(153, 85, 255, 0.16);
+    box-shadow: 0 0 0 1px rgba(153, 85, 255, 0.4) inset;
   }
 
   .fnb-nav-link .fnb-arrow {
     width: 12px;
     height: 12px;
-    opacity: 0.8;
+    opacity: 0.7;
     transition: transform 0.22s ease;
     flex-shrink: 0;
   }
@@ -168,16 +168,16 @@ const styles = `
     left: 50%;
     transform: translateX(-50%) translateY(-6px);
     min-width: 190px;
-    background: #000;
-    border: 1px solid rgba(250, 204, 21, 0.25);
+    background: #0e0a1a;
+    border: 1px solid rgba(153, 85, 255, 0.28);
     border-radius: 16px;
     padding: 8px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.8),
-      0 0 16px rgba(250, 204, 21, 0.16);
+      0 20px 60px rgba(0, 0, 0, 0.85),
+      0 0 20px rgba(153, 85, 255, 0.18);
     pointer-events: none;
   }
 
@@ -196,9 +196,9 @@ const styles = `
     transform: translateX(-50%) rotate(45deg);
     width: 10px;
     height: 10px;
-    background: #000;
-    border-left: 1px solid rgba(250, 204, 21, 0.25);
-    border-top: 1px solid rgba(250, 204, 21, 0.25);
+    background: #0e0a1a;
+    border-left: 1px solid rgba(153, 85, 255, 0.28);
+    border-top: 1px solid rgba(153, 85, 255, 0.28);
     border-radius: 2px;
   }
 
@@ -208,7 +208,7 @@ const styles = `
     gap: 10px;
     padding: 10px 14px;
     border-radius: 10px;
-    color: #facc15;
+    color: #aa77ff;
     font-family: 'Exo 2', sans-serif;
     font-size: 13px;
     font-weight: 400;
@@ -222,8 +222,8 @@ const styles = `
   }
 
   .fnb-dropdown-item:hover {
-    background: rgba(250, 204, 21, 0.12);
-    color: #facc15;
+    background: rgba(153, 85, 255, 0.14);
+    color: #cc99ff;
   }
 
   .fnb-dropdown-item.danger:hover {
@@ -233,7 +233,7 @@ const styles = `
 
   .fnb-dropdown-divider {
     height: 1px;
-    background: rgba(250, 204, 21, 0.18);
+    background: rgba(153, 85, 255, 0.2);
     margin: 6px 8px;
   }
 
@@ -253,7 +253,7 @@ const styles = `
     font-size: 13.5px;
     font-weight: 500;
     letter-spacing: 0.04em;
-    color: #facc15;
+    color: #aa77ff;
     text-decoration: none;
     padding: 8px 14px;
     border-radius: 50px;
@@ -269,8 +269,8 @@ const styles = `
 
   .fnb-fav-btn:hover,
   .fnb-fav-btn.active {
-    color: #facc15;
-    background: rgba(250, 204, 21, 0.12);
+    color: #cc99ff;
+    background: rgba(153, 85, 255, 0.14);
   }
 
   .fnb-fav-count {
@@ -279,32 +279,32 @@ const styles = `
     right: 6px;
     width: 16px;
     height: 16px;
-    background: #facc15;
+    background: #9955ff;
     border-radius: 50%;
     font-size: 9px;
     font-weight: 700;
     font-family: 'Exo 2', sans-serif;
-    color: #000;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid #000;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
+    border: 1.5px solid #09070f;
+    box-shadow: 0 0 10px rgba(153, 85, 255, 0.7);
   }
 
   .fnb-user-avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #facc15;
+    background: #9955ff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
     font-family: 'Exo 2', sans-serif;
-    color: #000;
-    box-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(153, 85, 255, 0.6);
     flex-shrink: 0;
   }
 
@@ -315,14 +315,14 @@ const styles = `
     transform: translateX(-50%);
     width: 30%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #facc15, transparent);
+    background: linear-gradient(90deg, transparent, #9955ff, transparent);
     opacity: 0;
     transition: opacity 0.4s ease;
     border-radius: 1px;
   }
 
   .fnb-inner.scrolled .fnb-glow-line {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   @keyframes fnb-fadeIn {
@@ -434,7 +434,7 @@ export default function Navbar({
   const favCount = useSelector(s => s.favorites.items.filter(f => f.userId === userId).length);
 
   // Determine active page from location
-  const currentPage = location.pathname === '/' ? 'home' 
+  const currentPage = location.pathname === '/' ? 'home'
     : location.pathname.startsWith('/products') ? 'products'
     : location.pathname === '/favorites' ? 'favorites'
     : location.pathname === '/about' ? 'about'
@@ -452,7 +452,6 @@ export default function Navbar({
         setOpenDropdown(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -465,22 +464,22 @@ export default function Navbar({
     {
       label: "All Products",
       icon: "grid",
-      color: "rgba(250, 204, 21, 0.14)",
-      iconColor: "#facc15",
+      color: "rgba(153, 85, 255, 0.16)",
+      iconColor: "#aa77ff",
       onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
     {
       label: "New Arrivals",
       icon: "star",
-      color: "rgba(250, 204, 21, 0.14)",
-      iconColor: "#facc15",
+      color: "rgba(153, 85, 255, 0.16)",
+      iconColor: "#aa77ff",
       onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
     {
       label: "Featured",
       icon: "heart",
-      color: "rgba(250, 204, 21, 0.14)",
-      iconColor: "#facc15",
+      color: "rgba(153, 85, 255, 0.16)",
+      iconColor: "#aa77ff",
       onClick: () => { navigate('/products'); setOpenDropdown(null); }
     },
   ];
@@ -520,9 +519,7 @@ export default function Navbar({
             <li className="fnb-nav-item" role="none">
               <button
                 onClick={() => navigate('/')}
-                className={`fnb-nav-link${
-                  currentPage === "home" ? " active" : ""
-                }`}
+                className={`fnb-nav-link${currentPage === "home" ? " active" : ""}`}
                 role="menuitem"
               >
                 <NavIcon type="home" />
@@ -532,9 +529,7 @@ export default function Navbar({
 
             <li className="fnb-nav-item" role="none">
               <button
-                className={`fnb-nav-link${
-                  openDropdown === "products" ? " open" : ""
-                }${currentPage === "products" ? " active" : ""}`}
+                className={`fnb-nav-link${openDropdown === "products" ? " open" : ""}${currentPage === "products" ? " active" : ""}`}
                 onClick={() => toggle("products")}
                 aria-haspopup="true"
                 aria-expanded={openDropdown === "products"}
@@ -546,9 +541,7 @@ export default function Navbar({
               </button>
 
               <div
-                className={`fnb-dropdown${
-                  openDropdown === "products" ? " open" : ""
-                }`}
+                className={`fnb-dropdown${openDropdown === "products" ? " open" : ""}`}
                 role="menu"
               >
                 {productCategories.map((item) => (
@@ -560,10 +553,7 @@ export default function Navbar({
                   >
                     <span
                       className="fnb-dropdown-icon"
-                      style={{
-                        background: item.color,
-                        color: item.iconColor,
-                      }}
+                      style={{ background: item.color, color: item.iconColor }}
                     >
                       <NavIcon type={item.icon} />
                     </span>
@@ -576,9 +566,7 @@ export default function Navbar({
             <li className="fnb-nav-item" role="none">
               <button
                 onClick={() => navigate('/favorites')}
-                className={`fnb-fav-btn${
-                  currentPage === "favorites" ? " active" : ""
-                }`}
+                className={`fnb-fav-btn${currentPage === "favorites" ? " active" : ""}`}
                 aria-label={`Favorites, ${favCount} items`}
                 role="menuitem"
               >
@@ -595,9 +583,7 @@ export default function Navbar({
             <li className="fnb-nav-item" role="none">
               <button
                 onClick={() => navigate('/about')}
-                className={`fnb-nav-link${
-                  currentPage === "about" ? " active" : ""
-                }`}
+                className={`fnb-nav-link${currentPage === "about" ? " active" : ""}`}
                 role="menuitem"
               >
                 <NavIcon type="about" />
@@ -607,9 +593,7 @@ export default function Navbar({
 
             <li className="fnb-nav-item" role="none">
               <button
-                className={`fnb-nav-link${
-                  openDropdown === "user" ? " open" : ""
-                }`}
+                className={`fnb-nav-link${openDropdown === "user" ? " open" : ""}`}
                 onClick={() => toggle("user")}
                 aria-haspopup="true"
                 aria-expanded={openDropdown === "user"}
@@ -623,49 +607,37 @@ export default function Navbar({
                 ) : (
                   <NavIcon type="user" />
                 )}
-
                 {isLoggedIn ? userName : "Account"}
                 <NavIcon type="chevron" />
               </button>
 
               <div
-                className={`fnb-dropdown${
-                  openDropdown === "user" ? " open" : ""
-                }`}
+                className={`fnb-dropdown${openDropdown === "user" ? " open" : ""}`}
                 role="menu"
                 style={{
                   minWidth: "170px",
                   right: 0,
                   left: "auto",
-                  transform:
-                    openDropdown === "user"
-                      ? "translateX(0) translateY(0)"
-                      : "translateX(0) translateY(-6px)",
+                  transform: openDropdown === "user"
+                    ? "translateX(0) translateY(0)"
+                    : "translateX(0) translateY(-6px)",
                 }}
               >
                 {userLinks.map((item, i) =>
                   item.label === "divider" ? (
-                    <div
-                      key={i}
-                      className="fnb-dropdown-divider"
-                      role="separator"
-                    />
+                    <div key={i} className="fnb-dropdown-divider" role="separator" />
                   ) : (
                     <button
                       key={item.label}
-                      className={`fnb-dropdown-item${
-                        item.danger ? " danger" : ""
-                      }`}
+                      className={`fnb-dropdown-item${item.danger ? " danger" : ""}`}
                       role="menuitem"
                       onClick={item.onClick}
                     >
                       <span
                         className="fnb-dropdown-icon"
                         style={{
-                          background: item.danger
-                            ? "rgba(255,70,70,0.12)"
-                            : "rgba(250,204,21,0.14)",
-                          color: item.danger ? "#ff7070" : "#facc15",
+                          background: item.danger ? "rgba(255,70,70,0.12)" : "rgba(153,85,255,0.16)",
+                          color: item.danger ? "#ff7070" : "#aa77ff",
                         }}
                       >
                         <NavIcon type={item.icon} />
