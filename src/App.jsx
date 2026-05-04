@@ -6,6 +6,14 @@ import KashafNavbar from './components/Navbar'
 import ProductListPage from './pages/public/ProductListPage'
 import FavoritesPage   from './pages/public/FavoritesPage'
 import HomePage        from './pages/public/HomePage'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AddProduct from './pages/admin/AddProduct'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminProductDetails from './pages/admin/AdminProductDetails'
+import AdminCategories from './pages/admin/AdminCategories'
+import AdminCategoryForm from "./pages/admin/AdminCategoryForm";
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminOrders from "./pages/admin/AdminOrders";
 
 const Placeholder = ({ title, owner }) => (
   <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center gap-3 text-center px-4 transition-colors">
@@ -20,10 +28,10 @@ function App() {
   return (
     <BrowserRouter>
       {/* Kashaf's Futuristic Navbar - Member 1's work */}
-      <KashafNavbar
+      {/* <KashafNavbar
         isLoggedIn={false}
         userName="User"
-      />
+      /> */}
 
      
       
@@ -35,10 +43,16 @@ function App() {
         <Route path="/login"          element={<Placeholder title="Login Page"          owner="Member 4" />} />
         <Route path="/about"          element={<Placeholder title="About Page"          owner="Member 1" />} />
         <Route path="/admin/login"    element={<Placeholder title="Admin Login"         owner="Member 4" />} />
-        <Route path="/admin"          element={<Placeholder title="Admin Dashboard"     owner="Member 4" />} />
-        <Route path="/admin/products" element={<Placeholder title="Manage Products"     owner="Member 4" />} />
-        <Route path="/admin/products/new"      element={<Placeholder title="Add Product"  owner="Member 4" />} />
-        <Route path="/admin/products/:id/edit" element={<Placeholder title="Edit Product" owner="Member 4" />} />
+        <Route path="/admin"          element={<AdminDashboard/>} />
+        <Route path="/admin/products" element={<AdminProducts />} />
+        <Route path="/admin/products/add"      element={<AddProduct />} />
+        <Route path="/admin/products/:id" element={<AdminProductDetails />} />
+        <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="/admin/products/edit/:id" element={<AdminProductDetails />} /> 
+        <Route path="/admin/categories/add" element={<AdminCategoryForm />} />
+        <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
       </Routes>
     </BrowserRouter>
   )
