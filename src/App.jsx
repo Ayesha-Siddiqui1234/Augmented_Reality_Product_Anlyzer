@@ -4,7 +4,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import KashafNavbar from './components/Navbar'
 import ProductListPage from './pages/public/ProductListPage'
+import ProductDetailPage from './pages/public/ProductDetailPage'
+import Product3DViewer from './pages/public/Product3DViewer'
+import ARPreview from './pages/public/ARPreview'
 import FavoritesPage   from './pages/public/FavoritesPage'
+import CartPage from './pages/public/CartPage'
 import HomePage        from './pages/public/HomePage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AddProduct from './pages/admin/AddProduct'
@@ -38,8 +42,11 @@ function App() {
       <Routes>
         <Route path="/"               element={<HomePage />} />
         <Route path="/products"       element={<ProductListPage />} />
-        <Route path="/products/:slug" element={<Placeholder title="Product Detail Page" owner="Member 3" />} />
+        <Route path="/products/:slug" element={<ProductDetailPage />} />
+        <Route path="/products/:slug/3d-view" element={<Product3DViewer />} />
+        <Route path="/products/:slug/ar-preview" element={<ARPreview />} />
         <Route path="/favorites"      element={<FavoritesPage />} />
+        <Route path="/cart"           element={<CartPage />} />
         <Route path="/login"          element={<Placeholder title="Login Page"          owner="Member 4" />} />
         <Route path="/about"          element={<Placeholder title="About Page"          owner="Member 1" />} />
         <Route path="/admin/login"    element={<Placeholder title="Admin Login"         owner="Member 4" />} />

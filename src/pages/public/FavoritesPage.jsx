@@ -3,79 +3,248 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { selectFavoriteProductsByUser } from '../../features/favorites/favoriteSlice'
-import { toggleFavorite } from '../../features/favorites/favoriteSlice'
-import ProductCard from '../../components/product/ProductCard'
+import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
+import PublicNavbar from '../../components/PublicNavbar'
 
-const FavoritesPage = () => {
-  const dispatch  = useDispatch()
-  const navigate  = useNavigate()
-  
-  // TODO: Get actual userId from auth state when login is implemented
-  const userId = 'user-1' // Temporary hardcoded user
-  const favorites = useSelector(state => selectFavoriteProductsByUser(state, userId))
+const StarRating = ({ rating }) => {
+  const full = Math.floor(rating)
+  const half = rating % 1 >= 0.5
+  return (
+    <span className="flex gap-0.5 text-purple-400 text-xs">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span key={i}>{i < full ? '★' : i === full && half ? '⯨' : '☆'}</span>
+      ))}
+    </span>
+  )
+}
 
-  const removeAll = () => favorites.forEach(p => dispatch(toggleFavorite({ userId, productId: p.id })))
+const ProductCard = ({ product }) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const userId = 'user-1'
+  const isFavorited = useSelector(state => selectIsFavoriteByUser(state, userId, product.id))
+  const discount = Math.round((1 - product.price / product.originalPrice) * 100)
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-50 tracking-tight flex items-center gap-3">
-              My Favorites
-              {favorites.length > 0 && (
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-stone-900 dark:bg-amber-400 text-white dark:text-stone-900 text-sm font-bold">
-                  {favorites.length}
-                </span>
-              )}
-            </h1>
-            <p className="mt-1 text-stone-500 dark:text-stone-400 text-sm">Products you have saved for later</p>
-          </div>
-          {favorites.length > 0 && (
-            <button
-              onClick={removeAll}
-              className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-            >
-              Remove All
-            </button>
+    <div
+      onClick={() => navigate(`/products/${product.slug}`)}
+      className="group relative rounded-2xl overflow-hidden border border-purple-400/15 bg-white/5 backdrop-blur-md cursor-pointer card-glow"
+    >
+      {/* Image */}
+      <div className="relative h-56 overflow-hidden bg-[#09070f]/40">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex gap-2">
+          {product.isNew && (
+            <span className="px-2 py-0.5 text-[10px] font-bold tracking-widest rounded-full bg-purple-400 text-black uppercase">New</span>
+          )}
+          {discount > 0 && (
+            <span className="px-2 py-0.5 text-[10px] font-bold tracking-widest rounded-full bg-[#000]/60 text-purple-400 border border-purple-400/30 uppercase">-{discount}%</span>
+          )}
+          {product.arSupported && (
+            <span className="px-2 py-0.5 text-[10px] font-bold tracking-widest rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 uppercase">AR</span>
           )}
         </div>
 
-        {favorites.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-            <div className="w-20 h-20 rounded-full bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-100 dark:border-orange-800 flex items-center justify-center text-4xl">♡</div>
-            <h2 className="text-xl font-semibold text-stone-700 dark:text-stone-200">No favorites yet</h2>
-            <p className="text-stone-500 dark:text-stone-400 text-sm max-w-xs leading-relaxed">
-              Browse our products and click the heart icon on any item to save it here.
-            </p>
-            <button
-              onClick={() => navigate('/products')}
-              className="mt-2 px-8 py-3 bg-stone-900 dark:bg-amber-400 text-white dark:text-stone-900 text-sm font-medium rounded-xl hover:bg-stone-700 dark:hover:bg-amber-300 transition-colors duration-200"
-            >
-              Browse Products
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {favorites.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-            <div className="mt-12 text-center">
-              <p className="text-stone-500 dark:text-stone-400 text-sm mb-3">Want to discover more?</p>
-              <button
-                onClick={() => navigate('/products')}
-                className="px-6 py-2.5 border border-stone-300 dark:border-stone-600 text-stone-700 dark:text-stone-300 text-sm font-medium rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition"
-              >
-                Browse All Products
-              </button>
-            </div>
-          </>
-        )}
+        {/* Favorite Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            dispatch(toggleFavorite({ userId, productId: product.id }))
+          }}
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-lg backdrop-blur-md border transition-all ${
+            isFavorited
+              ? 'bg-purple-400 border-purple-400 text-black scale-110'
+              : 'bg-[#000]/60 border-purple-400/30 text-purple-400 hover:scale-110'
+          }`}
+        >
+          {isFavorited ? '♥' : '♡'}
+        </button>
+      </div>
+
+      {/* Info */}
+      <div className="p-4">
+        <p className="text-purple-400/50 text-[10px] uppercase tracking-widest mb-1">{product.categoryLabel}</p>
+        <h3 className="text-purple-100 font-semibold text-sm leading-snug mb-2 line-clamp-1">{product.name}</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <StarRating rating={product.rating} />
+          <span className="text-purple-400/40 text-[10px]">({product.reviewCount})</span>
+        </div>
+        <div className="flex items-baseline gap-2 mb-4">
+          <span className="text-purple-400 font-bold text-base">PKR {product.price.toLocaleString()}</span>
+          {product.originalPrice > product.price && (
+            <span className="text-purple-400/30 text-xs line-through">PKR {product.originalPrice.toLocaleString()}</span>
+          )}
+        </div>
+        
+        {/* View Details Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/products/${product.slug}`)
+          }}
+          className="w-full py-2.5 rounded-full bg-purple-400 text-black text-xs font-bold hover:bg-purple-300 transition-all shadow-lg hover:shadow-purple-400/50"
+        >
+          View Details →
+        </button>
       </div>
     </div>
+  )
+}
+
+const FavoritesPage = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  
+  const userId = 'user-1' // TODO: Get from auth
+  const favorites = useSelector(state => selectFavoriteProductsByUser(state, userId))
+
+  const removeAll = () => {
+    favorites.forEach(p => dispatch(toggleFavorite({ userId, productId: p.id })))
+  }
+
+  return (
+    <>
+      <PublicNavbar />
+      
+      <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
+        
+        {/* Global Styles */}
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+          body { font-family: 'Poppins', sans-serif; }
+          
+          /* Light Theme Styles */
+          .light-theme main {
+            background: linear-gradient(135deg, #f5f3ff 0%, #e9d5ff 100%) !important;
+          }
+          
+          .light-theme .text-purple-400 {
+            color: #7c3aed !important;
+          }
+          
+          .light-theme .text-purple-100 {
+            color: #5b21b6 !important;
+          }
+          
+          .light-theme .text-purple-100\\/60 {
+            color: #6d28d9 !important;
+          }
+          
+          .light-theme .text-purple-400\\/60,
+          .light-theme .text-purple-400\\/50,
+          .light-theme .text-purple-400\\/40 {
+            color: #7c3aed !important;
+          }
+          
+          .light-theme .bg-\\[\\#09070f\\]\\/60,
+          .light-theme .bg-\\[\\#09070f\\]\\/40,
+          .light-theme .bg-white\\/5 {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: rgba(139, 92, 246, 0.3) !important;
+          }
+          
+          .light-theme .border-purple-400\\/15,
+          .light-theme .border-purple-400\\/10,
+          .light-theme .border-purple-400\\/20,
+          .light-theme .border-purple-400\\/30 {
+            border-color: rgba(139, 92, 246, 0.3) !important;
+          }
+          
+          .grid-bg {
+            background-image:
+              linear-gradient(rgba(153,85,255,0.04) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(153,85,255,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+          }
+          
+          .card-glow:hover {
+            box-shadow: 0 0 40px rgba(153,85,255,0.2), 0 20px 60px rgba(0,0,0,0.5);
+            transform: translateY(-6px);
+            border-color: rgba(153,85,255,0.4);
+          }
+          .card-glow { transition: all 0.4s ease; }
+          
+          ::-webkit-scrollbar { width: 4px; }
+          ::-webkit-scrollbar-track { background: #000; }
+          ::-webkit-scrollbar-thumb { background: #9955ff; border-radius: 2px; }
+        `}</style>
+
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between mb-12 flex-wrap gap-4">
+            <div>
+              <p className="text-purple-400/60 text-xs tracking-[0.4em] uppercase mb-3">Your Collection</p>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-purple-400 leading-tight flex items-center gap-4">
+                My Favorites
+                {favorites.length > 0 && (
+                  <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-400 text-black text-lg font-bold shadow-[0_0_20px_rgba(153,85,255,0.4)]">
+                    {favorites.length}
+                  </span>
+                )}
+              </h1>
+              <p className="mt-3 text-purple-100/60 text-sm">Products you have saved for later</p>
+            </div>
+            
+            {favorites.length > 0 && (
+              <button
+                onClick={removeAll}
+                className="px-6 py-3 rounded-full border border-red-400/30 bg-red-400/5 text-red-400 font-semibold text-sm hover:bg-red-400/10 transition-all"
+              >
+                Remove All
+              </button>
+            )}
+          </div>
+
+          {/* Empty State or Products Grid */}
+          {favorites.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
+              <div className="w-24 h-24 rounded-full bg-purple-400/10 border-2 border-purple-400/30 flex items-center justify-center text-5xl">
+                ♡
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-purple-400 mb-2">No favorites yet</h2>
+                <p className="text-purple-100/60 text-sm max-w-md leading-relaxed">
+                  Browse our products and click the heart icon on any item to save it here.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/products')}
+                className="mt-4 px-8 py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition-all shadow-[0_0_30px_rgba(153,85,255,0.3)]"
+              >
+                Browse Products
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+                {favorites.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              
+              {/* CTA */}
+              <div className="text-center py-12 border-t border-purple-400/10">
+                <p className="text-purple-100/60 text-sm mb-4">Want to discover more?</p>
+                <button
+                  onClick={() => navigate('/products')}
+                  className="px-8 py-3 rounded-full border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold hover:bg-purple-400/10 transition-all"
+                >
+                  Browse All Products
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    </>
   )
 }
 

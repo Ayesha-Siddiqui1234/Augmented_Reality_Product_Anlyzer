@@ -1,6 +1,7 @@
 // src/pages/public/HomePage.jsx
 import { useEffect, useRef, useState } from 'react'
 import TextType from '../../components/TextType.jsx'
+import PublicNavbar from '../../components/PublicNavbar.jsx'
 
 /* ─── tiny hook: track scroll position ─── */
 const useScroll = () => {
@@ -113,9 +114,9 @@ const ProductCard = ({ product, delay = 0 }) => {
         >
           <a
             href={`/products/${product.slug}`}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-purple-400 text-black text-xs font-bold hover:bg-purple-300 transition"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-purple-400 text-black text-xs font-bold hover:bg-purple-300 transition shadow-lg hover:shadow-purple-400/50"
           >
-            View 3D ↗
+            Product Details →
           </a>
         </div>
       </div>
@@ -128,10 +129,19 @@ const ProductCard = ({ product, delay = 0 }) => {
           <StarRating rating={product.rating} />
           <span className="text-purple-400/40 text-[10px]">({product.reviewCount})</span>
         </div>
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-2 mb-4">
           <span className="text-purple-400 font-bold text-base">PKR {product.price.toLocaleString()}</span>
           <span className="text-purple-400/30 text-xs line-through">PKR {product.originalPrice.toLocaleString()}</span>
         </div>
+        
+        {/* View Details Button */}
+        <a
+          href={`/products/${product.slug}`}
+          onClick={(e) => e.stopPropagation()}
+          className="block w-full py-2.5 rounded-full bg-purple-400 text-black text-xs font-bold text-center hover:bg-purple-300 transition-all shadow-lg hover:shadow-purple-400/50"
+        >
+          View Details →
+        </a>
       </div>
     </div>
   )
@@ -171,6 +181,8 @@ const HomePage = () => {
 
   return (
     <main className="min-h-screen text-purple-400 overflow-x-hidden" style={{background:'#09070f'}}>
+
+      <PublicNavbar />
 
       {/* ── GLOBAL CSS INJECTED ── */}
       <style>{`
