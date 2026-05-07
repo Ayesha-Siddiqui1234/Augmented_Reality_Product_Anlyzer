@@ -26,6 +26,8 @@ export const products = [
       'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=900&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=900&q=80',
     ],
     modelUrl:
       'https://d1q70pf5vjeyhc.cloudfront.net/predictions/0074b3398d814fb7bfd17a35fb7d2f64/1.glb',
@@ -60,6 +62,7 @@ export const products = [
       'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=900&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
     ],
     modelUrl:
       'https://d1q70pf5vjeyhc.cloudfront.net/predictions/40df73fd15f74fa7851776e40ec4ce37/1.glb',
@@ -69,22 +72,22 @@ export const products = [
   },
   {
     id: 'p3',
-    slug: 'elegant-bedroom-furniture',
-    name: 'Elegant Bedroom Furniture',
+    slug: 'compact-study-desk',
+    name: 'Compact Study Desk',
     price: 21000,
     originalPrice: 24500,
     category: 'desks',
     categoryLabel: 'Desks',
-    shortDescription: 'Elegant bedroom furniture set with modern design.',
+    shortDescription: 'Functional desk for study rooms, apartments, and home offices.',
     description:
-      'A beautiful bedroom furniture piece with modern aesthetics, perfect for contemporary homes.',
+      'A compact study desk with modern aesthetics, storage-friendly dimensions, and durable build quality.',
     dimensions: {
       width: '120 cm',
       height: '75 cm',
       depth: '60 cm',
     },
     colors: ['White', 'Walnut'],
-    tags: ['Bedroom', 'Modern', 'Elegant'],
+    tags: ['Study Desk', 'Office', 'Compact'],
     rating: 4.7,
     reviewCount: 34,
     stock: 10,
@@ -94,6 +97,7 @@ export const products = [
       'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=900&q=80',
     ],
     modelUrl:
       'https://d1q70pf5vjeyhc.cloudfront.net/predictions/0b8e18a8680547099dc875a53d419a0c/1.glb',
@@ -103,8 +107,8 @@ export const products = [
   },
   {
     id: 'p4',
-    slug: 'modern-floor-lamp',
-    name: 'Modern Floor Lamp',
+    slug: 'minimal-floor-lamp',
+    name: 'Minimal Floor Lamp',
     price: 9200,
     originalPrice: 11000,
     category: 'lighting',
@@ -162,11 +166,46 @@ export const products = [
       'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
     ],
     modelUrl:
       'https://d1q70pf5vjeyhc.cloudfront.net/predictions/f8831904d5124320ba10c0a51286d030/1.glb',
     arSupported: true,
     material: 'Fabric and Foam',
     brand: 'Urban Nest',
+  },
+  {
+    id: 'p6',
+    slug: 'bedside-storage-cabinet',
+    name: 'Bedside Storage Cabinet',
+    price: 12500,
+    originalPrice: 14900,
+    category: 'storage',
+    categoryLabel: 'Storage',
+    shortDescription: 'Compact bedside cabinet with clean drawers and minimalist finish.',
+    description:
+      'A sleek storage unit suitable for bedrooms and compact spaces, combining beauty and utility.',
+    dimensions: {
+      width: '48 cm',
+      height: '58 cm',
+      depth: '40 cm',
+    },
+    colors: ['Walnut', 'White'],
+    tags: ['Storage', 'Cabinet', 'Bedroom'],
+    rating: 4.2,
+    reviewCount: 12,
+    stock: 9,
+    featured: false,
+    isNew: false,
+    imageUrl:
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+    ],
+    modelUrl:
+      'https://d1q70pf5vjeyhc.cloudfront.net/predictions/75df0548ae274271b0c06e064ae97e82/1.glb',
+    arSupported: true,
+    material: 'Engineered Wood',
+    brand: 'StoreEase',
   },
 ]

@@ -15,16 +15,23 @@ const cartSlice = createSlice({
       )
 
       if (existingItem) {
-        existingItem.quantity += 1
+        // Check if quantity is less than stock before increasing
+        if (existingItem.quantity < product.stock) {
+          existingItem.quantity += 1
+        }
       } else {
-        state.items.push({
-          userId,
-          productId: product.id,
-          name: product.name,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          quantity: 1,
-        })
+        // Add new item only if stock is available
+        if (product.stock > 0) {
+          state.items.push({
+            userId,
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            quantity: 1,
+            stock: product.stock, // Store stock info
+          })
+        }
       }
     },
 
@@ -38,7 +45,7 @@ const cartSlice = createSlice({
     },
 
     increaseQuantity: (state, action) => {
-      const { userId, productId } = action.payload
+      const { userId, productId, stock } = action.payload
 
       const item = state.items.find(
         (item) =>
@@ -46,7 +53,10 @@ const cartSlice = createSlice({
       )
 
       if (item) {
-        item.quantity += 1
+        // Only increase if quantity is less than stock
+        if (item.quantity < stock) {
+          item.quantity += 1
+        }
       }
     },
 
