@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { signup, selectAuthLoading, selectAuthError } from '../../features/auth/authSlice'
-import PublicNavbar from '../../components/PublicNavbar'
+
 
 const UserSignup = () => {
   const navigate = useNavigate()
@@ -81,7 +81,7 @@ const UserSignup = () => {
 
   return (
     <>
-      <PublicNavbar />
+      {/* <PublicNavbar /> */}
       
       <main className="min-h-screen flex items-center justify-center px-6 py-12" style={{background:'#09070f'}}>
         

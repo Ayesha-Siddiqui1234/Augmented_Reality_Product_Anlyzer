@@ -70,8 +70,8 @@ const UserLogin = () => {
 
   return (
     <>
-      <PublicNavbar />
-      
+      {/* <PublicNavbar />
+       */}
       <main className="min-h-screen flex items-center justify-center px-6 py-12" style={{background:'#09070f'}}>
         
         {/* Global Styles */}
@@ -223,28 +223,10 @@ const UserLogin = () => {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-purple-400/20"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-[#09070f]/60 text-purple-400/60">Or continue with</span>
-              </div>
+             
             </div>
 
-            {/* Social Login */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => alert('Google login coming soon!')}
-                className="py-3 rounded-xl border border-purple-400/20 bg-purple-400/5 text-purple-300 text-sm font-semibold hover:bg-purple-400/10 transition flex items-center justify-center gap-2"
-              >
-                <span>🔵</span> Google
-              </button>
-              <button
-                type="button"
-                onClick={() => alert('Facebook login coming soon!')}
-                className="py-3 rounded-xl border border-purple-400/20 bg-purple-400/5 text-purple-300 text-sm font-semibold hover:bg-purple-400/10 transition flex items-center justify-center gap-2"
-              >
-                <span>📘</span> Facebook
-              </button>
-            </div>
+            
           </div>
         </div>
       </main>

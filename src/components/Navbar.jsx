@@ -436,9 +436,9 @@ export default function Navbar({
   // Determine active page from location
   const currentPage = location.pathname === '/' ? 'home'
     : location.pathname.startsWith('/products') ? 'products'
-    : location.pathname === '/favorites' ? 'favorites'
-    : location.pathname === '/about' ? 'about'
-    : activePage;
+      : location.pathname === '/favorites' ? 'favorites'
+        : location.pathname === '/about' ? 'about'
+          : activePage;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -484,17 +484,17 @@ export default function Navbar({
     },
   ];
 
-  const userLinks = isLoggedIn
-    ? [
-        { label: "My Profile", icon: "user", onClick: () => { navigate('/profile'); setOpenDropdown(null); } },
-        { label: "My Orders", icon: "grid", onClick: () => { navigate('/orders'); setOpenDropdown(null); } },
-        { label: "divider" },
-        { label: "Log Out", icon: "logout", danger: true, onClick: () => { console.log('Logout'); setOpenDropdown(null); } },
-      ]
-    : [
-        { label: "Log In", icon: "login", onClick: () => { navigate('/login'); setOpenDropdown(null); } },
-        { label: "Sign Up", icon: "signup", onClick: () => { navigate('/signup'); setOpenDropdown(null); } },
-      ];
+  const userLinks = [
+  {
+    label: "Log Out",
+    icon: "logout",
+    danger: true,
+    onClick: () => {
+      setOpenDropdown(null);
+      navigate("/login");
+    },
+  },
+];
 
   return (
     <>
@@ -593,22 +593,15 @@ export default function Navbar({
 
             <li className="fnb-nav-item" role="none">
               <button
-                className={`fnb-nav-link${openDropdown === "user" ? " open" : ""}`}
+                className={`fnb-user-icon-btn${openDropdown === "user" ? " open" : ""}`}
                 onClick={() => toggle("user")}
+                onMouseEnter={() => setOpenDropdown("user")}
                 aria-haspopup="true"
                 aria-expanded={openDropdown === "user"}
                 role="menuitem"
-                style={{ gap: "8px" }}
+                title="Account"
               >
-                {isLoggedIn ? (
-                  <div className="fnb-user-avatar" aria-hidden="true">
-                    {userName.charAt(0).toUpperCase()}
-                  </div>
-                ) : (
-                  <NavIcon type="user" />
-                )}
-                {isLoggedIn ? userName : "Account"}
-                <NavIcon type="chevron" />
+                <NavIcon type="user" />
               </button>
 
               <div

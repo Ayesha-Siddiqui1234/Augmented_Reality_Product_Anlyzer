@@ -13,7 +13,8 @@ import {
 } from '../../features/cart/cartSlice'
 import { selectProductById } from '../../features/products/productSlice'
 import { selectIsAuthenticated } from '../../features/auth/authSlice'
-import PublicNavbar from '../../components/PublicNavbar'
+import Navbar from '../../components/Navbar'
+
 
 const CartItemWith3D = ({ item, onIncrease, onDecrease, onRemove }) => {
   const navigate = useNavigate()
@@ -185,12 +186,12 @@ const CartPage = () => {
     }
     
     // Proceed with checkout
-    alert('Checkout functionality will be implemented by Member 4!')
+    navigate('/checkout')
   }
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
       <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
         
@@ -267,7 +268,7 @@ const CartPage = () => {
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-12 gap-4">
             <div>
-              <p className="text-purple-400/60 text-[10px] md:text-xs tracking-[0.3em] md:tracking-[0.4em] uppercase mb-2 md:mb-3">Your Shopping</p>
+              <p className="text-purple-400/60 text-[10px] md:text-xs mt-[45px] tracking-[0.3em] md:tracking-[0.4em] uppercase mb-2 md:mb-3">Your Shopping</p>
               <h1 className="text-2xl md:text-4xl lg:text-5xl font-extrabold text-purple-400 leading-tight flex items-center gap-3 md:gap-4">
                 Shopping Cart
                 {cartItems.length > 0 && (
