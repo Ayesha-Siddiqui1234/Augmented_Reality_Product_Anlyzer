@@ -116,11 +116,11 @@ const ProductDetailPage = () => {
         }
         
         .light-theme .text-purple-400 {
-          color: #7c3aed !important;
+          color: #5b21b6 !important;
         }
         
         .light-theme .text-purple-100 {
-          color: #5b21b6 !important;
+          color: #3b0764 !important;
         }
         
         .light-theme .text-purple-300 {
@@ -129,12 +129,16 @@ const ProductDetailPage = () => {
         
         .light-theme .text-purple-100\\/60,
         .light-theme .text-purple-100\\/50 {
-          color: #6d28d9 !important;
+          color: #5b21b6 !important;
         }
         
         .light-theme .text-purple-400\\/60,
         .light-theme .text-purple-400\\/50 {
-          color: #7c3aed !important;
+          color: #6d28d9 !important;
+        }
+        
+        .light-theme .text-purple-400\\/30 {
+          color: #9333ea !important;
         }
         
         .light-theme .bg-\\[\\#09070f\\]\\/60,

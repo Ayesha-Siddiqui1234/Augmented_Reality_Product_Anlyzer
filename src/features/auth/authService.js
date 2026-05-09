@@ -1,27 +1,77 @@
-import axios from 'axios'
+// Mock Authentication Service
+// TODO: Replace with actual API calls when backend is ready
 
 const API_URL = 'http://localhost:5000/api/auth'
 
+// Simulate API delay
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
 const signup = async (userData) => {
-  const response = await axios.post(`${API_URL}/signup`, userData)
-
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token)
-    localStorage.setItem('user', JSON.stringify(response.data.user))
+  await delay(800) // Simulate network delay
+  
+  // Mock validation
+  const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]')
+  const userExists = existingUsers.find(u => u.email === userData.email)
+  
+  if (userExists) {
+    throw new Error('User with this email already exists')
   }
-
-  return response.data
+  
+  // Create mock user
+  const newUser = {
+    id: Date.now().toString(),
+    name: userData.name,
+    email: userData.email,
+    phone: userData.phone,
+    createdAt: new Date().toISOString()
+  }
+  
+  // Store user
+  existingUsers.push({ ...newUser, password: userData.password })
+  localStorage.setItem('registeredUsers', JSON.stringify(existingUsers))
+  
+  // Generate mock token
+  const token = `mock_token_${newUser.id}_${Date.now()}`
+  
+  // Store auth data
+  localStorage.setItem('token', token)
+  localStorage.setItem('user', JSON.stringify(newUser))
+  
+  return {
+    user: newUser,
+    token,
+    message: 'Signup successful'
+  }
 }
 
 const login = async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials)
-
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token)
-    localStorage.setItem('user', JSON.stringify(response.data.user))
+  await delay(800) // Simulate network delay
+  
+  // Mock validation
+  const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]')
+  const user = existingUsers.find(
+    u => u.email === credentials.email && u.password === credentials.password
+  )
+  
+  if (!user) {
+    throw new Error('Invalid email or password')
   }
-
-  return response.data
+  
+  // Create user object without password
+  const { password, ...userWithoutPassword } = user
+  
+  // Generate mock token
+  const token = `mock_token_${user.id}_${Date.now()}`
+  
+  // Store auth data
+  localStorage.setItem('token', token)
+  localStorage.setItem('user', JSON.stringify(userWithoutPassword))
+  
+  return {
+    user: userWithoutPassword,
+    token,
+    message: 'Login successful'
+  }
 }
 
 const logout = () => {

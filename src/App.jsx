@@ -10,6 +10,9 @@ import ARPreview from './pages/public/ARPreview'
 import FavoritesPage   from './pages/public/FavoritesPage'
 import CartPage from './pages/public/CartPage'
 import HomePage        from './pages/public/HomePage'
+import UserSignup from './pages/auth/UserSignup'
+import UserLogin from './pages/auth/UserLogin'
+import AdminLogin from './pages/auth/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AddProduct from './pages/admin/AddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
@@ -47,9 +50,10 @@ function App() {
         <Route path="/products/:slug/ar-preview" element={<ARPreview />} />
         <Route path="/favorites"      element={<FavoritesPage />} />
         <Route path="/cart"           element={<CartPage />} />
-        <Route path="/login"          element={<Placeholder title="Login Page"          owner="Member 4" />} />
+        <Route path="/signup"         element={<UserSignup />} />
+        <Route path="/login"          element={<UserLogin />} />
+        <Route path="/admin/login"    element={<AdminLogin />} />
         <Route path="/about"          element={<Placeholder title="About Page"          owner="Member 1" />} />
-        <Route path="/admin/login"    element={<Placeholder title="Admin Login"         owner="Member 4" />} />
         <Route path="/admin"          element={<AdminDashboard/>} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add"      element={<AddProduct />} />

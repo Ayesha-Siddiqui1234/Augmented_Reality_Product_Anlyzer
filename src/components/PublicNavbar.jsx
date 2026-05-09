@@ -10,6 +10,7 @@ const PublicNavbar = () => {
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Get favorites and cart count
   const userId = 'user-1' // TODO: Get from auth
@@ -82,6 +83,22 @@ const PublicNavbar = () => {
           background: transparent !important;
           border: none !important;
         }
+        
+        /* Mobile menu animation */
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
+        }
       `}</style>
 
       {/* NAVBAR - Purplish Black Gradient */}
@@ -112,8 +129,8 @@ const PublicNavbar = () => {
             </div>
           </button>
 
-          {/* Nav Links */}
-          <div className="flex items-center gap-2">
+          {/* Desktop Nav Links */}
+          <div className="hidden lg:flex items-center gap-2">
             <NavLink onClick={() => navigate('/')} isActive={isActive('/')}>
               Home
             </NavLink>
@@ -152,14 +169,109 @@ const PublicNavbar = () => {
 
             {/* Admin Link */}
             <button
-              onClick={() => navigate('/admin')}
+              onClick={() => navigate('/admin/login')}
               className="ml-2 px-4 py-2 rounded-lg bg-purple-900/40 border border-purple-400/20 text-purple-300 text-sm font-semibold hover:bg-purple-600 hover:border-purple-400/40 hover:text-white hover:shadow-[0_0_15px_rgba(153,85,255,0.3)] transition-all duration-300"
             >
               Admin
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex lg:hidden items-center gap-2">
+            {/* Cart Icon with Badge (Mobile) */}
+            <button
+              onClick={() => navigate('/cart')}
+              className="relative w-10 h-10 rounded-lg bg-purple-900/40 border border-purple-400/20 flex items-center justify-center text-lg hover:bg-purple-800/60 transition-all"
+            >
+              🛒
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(153,85,255,0.6)]">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* Hamburger Menu */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="w-10 h-10 rounded-lg bg-purple-900/40 border border-purple-400/20 flex items-center justify-center hover:bg-purple-800/60 transition-all"
+            >
+              <div className="flex flex-col gap-1.5">
+                <span className={`w-5 h-0.5 bg-purple-300 transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`w-5 h-0.5 bg-purple-300 transition-all ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`w-5 h-0.5 bg-purple-300 transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+              </div>
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed top-[72px] left-0 right-0 z-40 bg-gradient-to-b from-[#0a0015] to-[#1a0a2e] border-b border-purple-400/20 shadow-[0_10px_40px_rgba(153,85,255,0.2)] animate-fadeIn">
+          <div className="max-w-7xl mx-auto px-6 py-4 space-y-2">
+            <MobileNavLink 
+              onClick={() => {
+                navigate('/')
+                setMobileMenuOpen(false)
+              }} 
+              isActive={isActive('/')}
+            >
+              🏠 Home
+            </MobileNavLink>
+
+            <MobileNavLink 
+              onClick={() => {
+                navigate('/products')
+                setMobileMenuOpen(false)
+              }} 
+              isActive={isActive('/products') || location.pathname.startsWith('/products/')}
+            >
+              🛋️ Products
+            </MobileNavLink>
+
+            <MobileNavLink 
+              onClick={() => {
+                navigate('/favorites')
+                setMobileMenuOpen(false)
+              }} 
+              isActive={isActive('/favorites')}
+              badge={favCount}
+            >
+              ❤️ Favorites
+            </MobileNavLink>
+
+            <MobileNavLink 
+              onClick={() => {
+                navigate('/cart')
+                setMobileMenuOpen(false)
+              }} 
+              isActive={isActive('/cart')}
+              badge={cartCount}
+            >
+              🛒 Cart
+            </MobileNavLink>
+
+            <div className="border-t border-purple-400/20 pt-2 mt-2">
+              <MobileNavLink 
+                onClick={() => {
+                  navigate('/admin/login')
+                  setMobileMenuOpen(false)
+                }}
+              >
+                👨‍💼 Admin
+              </MobileNavLink>
+
+              <button
+                onClick={toggleTheme}
+                className="w-full px-4 py-3 rounded-lg text-purple-300 text-sm font-semibold hover:bg-purple-900/40 transition-all text-left flex items-center justify-between"
+              >
+                <span>{theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Spacer */}
       <div className="h-20" style={{background: 'transparent'}} />
@@ -167,7 +279,7 @@ const PublicNavbar = () => {
   )
 }
 
-// NavLink Component
+// NavLink Component (Desktop)
 const NavLink = ({ onClick, isActive, badge, children }) => (
   <button
     onClick={onClick}
@@ -180,6 +292,25 @@ const NavLink = ({ onClick, isActive, badge, children }) => (
     {children}
     {badge > 0 && (
       <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(153,85,255,0.6)] animate-pulse">
+        {badge}
+      </span>
+    )}
+  </button>
+)
+
+// Mobile NavLink Component
+const MobileNavLink = ({ onClick, isActive, badge, children }) => (
+  <button
+    onClick={onClick}
+    className={`w-full px-4 py-3 rounded-lg text-sm font-semibold transition-all text-left flex items-center justify-between ${
+      isActive
+        ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-[0_0_20px_rgba(153,85,255,0.4)]'
+        : 'text-purple-300 hover:bg-purple-900/40'
+    }`}
+  >
+    <span>{children}</span>
+    {badge > 0 && (
+      <span className="min-w-[24px] h-[24px] px-2 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 text-white text-xs font-bold flex items-center justify-center shadow-[0_0_10px_rgba(153,85,255,0.6)]">
         {badge}
       </span>
     )}
