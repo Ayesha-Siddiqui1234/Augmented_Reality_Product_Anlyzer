@@ -41,3 +41,79 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+
+
+body.dark-theme {
+  background: #09070f;
+  color: #c084fc;
+}
+
+body.light-theme {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+/* Main page backgrounds */
+body.light-theme main {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important;
+  color: #6d28d9 !important;
+}
+
+body.dark-theme main {
+  background: #09070f !important;
+  color: #c084fc !important;
+}
+
+/* Common text colors */
+body.light-theme .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+body.light-theme .text-purple-100 {
+  color: #4c1d95 !important;
+}
+
+body.light-theme .text-purple-100\/60,
+body.light-theme .text-purple-100\/65,
+body.light-theme .text-purple-100\/70 {
+  color: #6d28d9 !important;
+}
+
+body.light-theme .text-purple-400\/40,
+body.light-theme .text-purple-400\/50,
+body.light-theme .text-purple-400\/60 {
+  color: #7c3aed !important;
+}
+
+/* Common dark cards become light cards */
+body.light-theme .bg-\[\#09070f\],
+body.light-theme .bg-\[\#09070f\]\/40,
+body.light-theme .bg-\[\#09070f\]\/60,
+body.light-theme .bg-\[\#120d1d\],
+body.light-theme .bg-\[\#120d1d\]\/80,
+body.light-theme .bg-white\/5 {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Borders */
+body.light-theme .border-purple-400\/10,
+body.light-theme .border-purple-400\/15,
+body.light-theme .border-purple-400\/20,
+body.light-theme .border-purple-400\/25,
+body.light-theme .border-purple-400\/30 {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Inputs */
+body.light-theme input,
+body.light-theme textarea,
+body.light-theme select {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #4c1d95 !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+body.light-theme input::placeholder,
+body.light-theme textarea::placeholder {
+  color: #8b5cf6 !important;
+}

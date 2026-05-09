@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import TextType from '../../components/TextType.jsx'
 import PublicNavbar from '../../components/PublicNavbar.jsx'
 import '../../styles/light-theme.css'
+import Navbar from '../../components/Navbar.jsx'
 
 
 /* ─── tiny hook: track scroll position ─── */
@@ -184,7 +185,7 @@ const HomePage = () => {
   return (
     <main className="min-h-screen text-purple-400 overflow-x-hidden" style={{background:'#09070f'}}>
 
-      <PublicNavbar />
+      <Navbar />
 
       {/* ── GLOBAL CSS INJECTED ── */}
       <style>{`

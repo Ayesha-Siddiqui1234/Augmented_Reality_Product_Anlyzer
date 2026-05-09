@@ -6,8 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { selectProductBySlug, selectRelatedProducts } from '../../features/products/productSlice'
 import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
 import { addToCart } from '../../features/cart/cartSlice'
-import PublicNavbar from '../../components/PublicNavbar'
-
+import Navbar from '../../components/Navbar'
 /* ─── hook: intersection observer for reveal animations ─── */
 const useReveal = (threshold = 0.15) => {
   const ref = useRef(null)
@@ -101,7 +100,7 @@ const ProductDetailPage = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
       <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
       

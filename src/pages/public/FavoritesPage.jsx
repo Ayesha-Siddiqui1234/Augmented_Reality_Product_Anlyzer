@@ -4,8 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { selectFavoriteProductsByUser } from '../../features/favorites/favoriteSlice'
 import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
-import PublicNavbar from '../../components/PublicNavbar'
-
+import Navbar from '../../components/Navbar'
 const StarRating = ({ rating }) => {
   const full = Math.floor(rating)
   const half = rating % 1 >= 0.5
@@ -111,10 +110,9 @@ const FavoritesPage = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
-      <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
-        
+<main className="min-h-screen text-purple-400 pt-24" style={{background:'#09070f'}}>        
         {/* Global Styles */}
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');

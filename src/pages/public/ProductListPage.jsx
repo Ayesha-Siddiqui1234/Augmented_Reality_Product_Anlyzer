@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { selectFilteredProducts, setSortBy } from '../../features/products/productSlice'
 import { setSearchQuery, setSelectedCategory } from '../../features/products/productSlice'
 import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
-import PublicNavbar from '../../components/PublicNavbar'
-
+import Navbar from '../../components/Navbar'
 const StarRating = ({ rating }) => {
   const full = Math.floor(rating)
   const half = rating % 1 >= 0.5
@@ -116,9 +115,9 @@ const ProductListPage = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
-      <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
+      <main className="min-h-screen mt-[40px] text-purple-400" style={{background:'#09070f'}}>
         
         {/* Global Styles */}
         <style>{`
