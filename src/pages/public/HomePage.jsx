@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react'
 import TextType from '../../components/TextType.jsx'
 import PublicNavbar from '../../components/PublicNavbar.jsx'
+import '../../styles/light-theme.css'
+
 
 /* ─── tiny hook: track scroll position ─── */
 const useScroll = () => {

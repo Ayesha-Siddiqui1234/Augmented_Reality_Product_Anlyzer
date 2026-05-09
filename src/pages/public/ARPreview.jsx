@@ -14,6 +14,7 @@ const ARPreview = () => {
   const [loading, setLoading] = useState(true)
   const [scale, setScale] = useState(1)
   const [selectedRoom, setSelectedRoom] = useState('living-room')
+  const [showInstructions, setShowInstructions] = useState(false)
   
   const product = useSelector(state => selectProductBySlug(state, slug))
 
@@ -73,40 +74,56 @@ const ARPreview = () => {
             height: 100%;
             --poster-color: transparent;
           }
+          
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+          }
         `}</style>
 
         {/* Header */}
-        <div className="border-b border-purple-400/10 py-6 px-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div>
-              <p className="text-purple-400/60 text-xs tracking-[0.3em] uppercase mb-2">Virtual AR Preview</p>
-              <h1 className="text-3xl font-extrabold text-purple-400 leading-tight">
+        <div className="border-b border-purple-400/10 py-4 md:py-6 px-4 md:px-6">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="w-full md:w-auto">
+              <p className="text-purple-400/60 text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] uppercase mb-1 md:mb-2">Virtual AR Preview</p>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-purple-400 leading-tight">
                 {product.name} in Your Space
               </h1>
-              <p className="text-purple-100/60 text-sm mt-2">
+              <p className="text-purple-100/60 text-xs md:text-sm mt-1 md:mt-2">
                 🖥️ Desktop Preview Mode - For real AR, open on mobile device
               </p>
             </div>
             <button
               onClick={() => navigate(`/products/${slug}/3d-view`)}
-              className="px-6 py-3 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-sm hover:bg-purple-400/10 transition-all"
+              className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-xs md:text-sm hover:bg-purple-400/10 transition-all"
             >
               ← Back to 3D View
             </button>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
           
           {/* AR Preview Container */}
-          <div className="rounded-3xl border border-purple-400/20 bg-[#09070f]/60 backdrop-blur-md overflow-hidden shadow-[0_0_60px_rgba(153,85,255,0.2)]">
+          <div className="rounded-2xl md:rounded-3xl border border-purple-400/20 bg-[#09070f]/60 backdrop-blur-md overflow-hidden shadow-[0_0_60px_rgba(153,85,255,0.2)]">
             
             {/* Room Background with 3D Model Overlay */}
             <div 
               className="relative" 
               style={{ 
-                height: 'calc(100vh - 300px)', 
-                minHeight: '600px',
+                height: 'calc(100vh - 250px)', 
+                minHeight: '400px',
+                maxHeight: '700px',
                 backgroundImage: `url(${roomBackgrounds[selectedRoom]})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -150,31 +167,53 @@ const ARPreview = () => {
                 />
               </div>
 
-              {/* Info Badge */}
-              <div className="absolute top-6 left-6 bg-purple-900/80 backdrop-blur-md border border-purple-400/30 rounded-2xl px-6 py-4 z-20">
-                <p className="text-white font-bold text-lg">{product.name}</p>
-                <p className="text-purple-300 text-sm">PKR {product.price.toLocaleString()}</p>
+              {/* Info Badge - Top Left */}
+              <div className="absolute top-4 left-4 bg-purple-900/90 backdrop-blur-md border border-purple-400/30 rounded-xl px-4 py-3 z-20 shadow-lg">
+                <p className="text-white font-bold text-sm md:text-lg">{product.name}</p>
+                <p className="text-purple-300 text-xs md:text-sm">PKR {product.price.toLocaleString()}</p>
               </div>
 
-              {/* Instructions */}
-              <div className="absolute top-6 right-6 bg-purple-900/80 backdrop-blur-md border border-purple-400/30 rounded-2xl px-6 py-4 z-20 max-w-xs">
-                <p className="text-white font-semibold text-sm mb-2">💡 How to use:</p>
-                <ul className="text-purple-200 text-xs space-y-1">
-                  <li>• Drag to rotate the model</li>
-                  <li>• Use scale slider to resize</li>
-                  <li>• Change room background</li>
-                  <li>• For real AR, use mobile device</li>
-                </ul>
+              {/* Instructions Toggle Button - Top Right (Mobile Friendly) */}
+              <div className="absolute top-4 right-4 z-20">
+                <button
+                  onClick={() => setShowInstructions(!showInstructions)}
+                  className="w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-3 rounded-xl bg-purple-900/90 backdrop-blur-md border border-purple-400/30 text-white font-semibold text-sm hover:bg-purple-800/90 transition-all shadow-lg flex items-center justify-center gap-2"
+                  title="How to use"
+                >
+                  <span className="text-lg">💡</span>
+                  <span className="hidden md:inline">Help</span>
+                </button>
               </div>
+
+              {/* Instructions Popup (Collapsible) */}
+              {showInstructions && (
+                <div className="absolute top-20 right-4 bg-purple-900/95 backdrop-blur-md border border-purple-400/30 rounded-2xl px-5 py-4 z-30 max-w-xs shadow-2xl animate-fadeIn">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-white font-semibold text-sm">💡 How to use:</p>
+                    <button
+                      onClick={() => setShowInstructions(false)}
+                      className="text-purple-300 hover:text-white text-lg leading-none"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <ul className="text-purple-200 text-xs space-y-2">
+                    <li>• Drag to rotate the model</li>
+                    <li>• Use scale slider to resize</li>
+                    <li>• Change room background</li>
+                    <li>• For real AR, use mobile device</li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Controls */}
-            <div className="border-t border-purple-400/10 bg-[#09070f]/40 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border-t border-purple-400/10 bg-[#09070f]/40 p-4 md:p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 
                 {/* Scale Control */}
                 <div>
-                  <label className="text-purple-400 font-semibold text-sm mb-3 block">
+                  <label className="text-purple-400 font-semibold text-xs md:text-sm mb-2 md:mb-3 block">
                     📏 Scale: {Math.round(scale * 100)}%
                   </label>
                   <input
@@ -189,7 +228,7 @@ const ARPreview = () => {
                       accentColor: '#9955ff',
                     }}
                   />
-                  <div className="flex justify-between text-purple-400/60 text-xs mt-2">
+                  <div className="flex justify-between text-purple-400/60 text-[10px] md:text-xs mt-1.5 md:mt-2">
                     <span>Small</span>
                     <span>Large</span>
                   </div>
@@ -197,7 +236,7 @@ const ARPreview = () => {
 
                 {/* Room Selection */}
                 <div>
-                  <label className="text-purple-400 font-semibold text-sm mb-3 block">
+                  <label className="text-purple-400 font-semibold text-xs md:text-sm mb-2 md:mb-3 block">
                     🏠 Room Background
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -205,7 +244,7 @@ const ARPreview = () => {
                       <button
                         key={room}
                         onClick={() => setSelectedRoom(room)}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                        className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition-all ${
                           selectedRoom === room
                             ? 'bg-purple-600 text-white'
                             : 'bg-purple-400/10 text-purple-300 hover:bg-purple-400/20'
@@ -219,11 +258,11 @@ const ARPreview = () => {
               </div>
 
               {/* Mobile AR CTA */}
-              <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-purple-900/40 to-purple-800/40 border border-purple-400/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-bold text-sm mb-1">📱 Want Real AR Experience?</p>
-                    <p className="text-purple-300 text-xs">Open this page on your mobile device for true augmented reality</p>
+              <div className="mt-4 md:mt-6 p-3 md:p-4 rounded-xl bg-gradient-to-r from-purple-900/40 to-purple-800/40 border border-purple-400/20">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="text-white font-bold text-xs md:text-sm mb-1">📱 Want Real AR Experience?</p>
+                    <p className="text-purple-300 text-[10px] md:text-xs">Open this page on your mobile device for true augmented reality</p>
                   </div>
                   <button
                     onClick={() => {
@@ -231,7 +270,7 @@ const ARPreview = () => {
                       navigator.clipboard.writeText(url)
                       alert('Link copied! Open it on your mobile device.')
                     }}
-                    className="px-6 py-3 rounded-xl bg-purple-400 text-black font-bold text-sm hover:bg-purple-300 transition-all whitespace-nowrap"
+                    className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 rounded-xl bg-purple-400 text-black font-bold text-xs md:text-sm hover:bg-purple-300 transition-all whitespace-nowrap"
                   >
                     Copy Link
                   </button>
@@ -241,22 +280,22 @@ const ARPreview = () => {
           </div>
 
           {/* Product Actions */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
             <button
               onClick={() => navigate(`/products/${slug}`)}
-              className="py-4 rounded-xl bg-purple-400 text-black font-bold hover:bg-purple-300 transition-all shadow-lg"
+              className="py-3 md:py-4 rounded-xl bg-purple-400 text-black font-bold text-sm md:text-base hover:bg-purple-300 transition-all shadow-lg"
             >
               View Product Details
             </button>
             <button
               onClick={() => navigate(`/products/${slug}/3d-view`)}
-              className="py-4 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold hover:bg-purple-400/10 transition-all"
+              className="py-3 md:py-4 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-sm md:text-base hover:bg-purple-400/10 transition-all"
             >
               Back to 3D View
             </button>
             <button
               onClick={() => navigate('/products')}
-              className="py-4 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold hover:bg-purple-400/10 transition-all"
+              className="py-3 md:py-4 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-sm md:text-base hover:bg-purple-400/10 transition-all"
             >
               Browse More Products
             </button>

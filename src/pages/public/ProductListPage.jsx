@@ -131,21 +131,25 @@ const ProductListPage = () => {
           }
           
           .light-theme .text-purple-400 {
-            color: #7c3aed !important;
-          }
-          
-          .light-theme .text-purple-100 {
             color: #5b21b6 !important;
           }
           
+          .light-theme .text-purple-100 {
+            color: #3b0764 !important;
+          }
+          
           .light-theme .text-purple-100\\/60 {
-            color: #6d28d9 !important;
+            color: #5b21b6 !important;
           }
           
           .light-theme .text-purple-400\\/60,
           .light-theme .text-purple-400\\/50,
           .light-theme .text-purple-400\\/40 {
-            color: #7c3aed !important;
+            color: #6d28d9 !important;
+          }
+          
+          .light-theme .text-purple-400\\/30 {
+            color: #9333ea !important;
           }
           
           .light-theme .bg-\\[\\#09070f\\]\\/60,
@@ -163,7 +167,7 @@ const ProductListPage = () => {
           }
           
           .light-theme .placeholder-purple-400\\/40::placeholder {
-            color: #7c3aed !important;
+            color: #6d28d9 !important;
           }
           
           .grid-bg {
