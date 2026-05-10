@@ -102,6 +102,8 @@ import axios from 'axios'
 const API_URL = 'http://localhost:5000/api/auth'
 
 const signup = async (userData) => {
+  console.log("inside auth servce.js",userData)
+  console.log("insdie sign up of auth service.js")
   const response = await axios.post(`${API_URL}/signup`, userData, {
     withCredentials: true,
   })

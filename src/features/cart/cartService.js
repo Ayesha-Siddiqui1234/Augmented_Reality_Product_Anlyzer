@@ -17,6 +17,7 @@ const getCart = async (token) => {
 }
 
 const addToCart = async (productId, token) => {
+    console.log("inside add to cart of cartservice.js",token,productId)
   const response = await axios.post(
     `${API_URL}/add`,
     { productId },

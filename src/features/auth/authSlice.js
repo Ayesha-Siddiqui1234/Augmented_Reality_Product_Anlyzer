@@ -8,24 +8,30 @@ export const signup = createAsyncThunk(
   'auth/signup',
   async (userData, thunkAPI) => {
     try {
+      console.log('inside sign up of authslice.js', userData)
       return await authService.signup(userData)
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || 'Signup failed'
-      )
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        'Signup failed'
+
+      return thunkAPI.rejectWithValue(message)
     }
   }
 )
-
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, thunkAPI) => {
     try {
       return await authService.login(credentials)
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || 'Login failed'
-      )
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        'Login failed'
+
+      return thunkAPI.rejectWithValue(message)
     }
   }
 )
@@ -37,9 +43,12 @@ export const logoutUser = createAsyncThunk(
       await authService.logout()
       return true
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || 'Logout failed'
-      )
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        'Logout failed'
+
+      return thunkAPI.rejectWithValue(message)
     }
   }
 )
