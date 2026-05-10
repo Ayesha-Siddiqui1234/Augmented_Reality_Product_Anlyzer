@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
+const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
 
 const StripeSimulationPage = () => {
   const navigate = useNavigate()
 
   const checkoutData = JSON.parse(localStorage.getItem('checkoutData'))
+  const simulationOrderId = localStorage.getItem('simulationOrderId')
 
   const [cardData, setCardData] = useState({
     cardNumber: '',
@@ -19,46 +22,105 @@ const StripeSimulationPage = () => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleChange = (e) => {
-    setCardData(prev => ({
+    setCardData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }))
   }
 
-  const handlePayment = () => {
-    if (!cardData.cardNumber || !cardData.expiry || !cardData.cvc || !cardData.name) {
+  const handlePayment = async () => {
+    if (
+      !cardData.cardNumber ||
+      !cardData.expiry ||
+      !cardData.cvc ||
+      !cardData.name
+    ) {
       alert('Please fill all card details.')
       return
     }
 
-    setIsProcessing(true)
+    if (!simulationOrderId) {
+      alert('No backend order found. Please checkout again.')
+      navigate('/checkout')
+      return
+    }
 
-    setTimeout(() => {
+    try {
+      setIsProcessing(true)
+
+      const token = localStorage.getItem('token')
+
+      if (!token) {
+        alert('Please login first.')
+        navigate('/login')
+        return
+      }
+
+      const response = await axios.patch(
+        `${PAYMENT_API_URL}/simulation/confirm/${simulationOrderId}`,
+        {
+          cardNumber: cardData.cardNumber,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const paidOrder = response.data.order
+
+      localStorage.setItem(
+        'latestOrder',
+        JSON.stringify({
+          id: paidOrder._id,
+          paymentStatus: paidOrder.paymentStatus,
+          orderStatus: paidOrder.orderStatus,
+          transactionId: paidOrder.simulationTransactionId,
+          total: paidOrder.total,
+          paidAt: paidOrder.paidAt,
+        })
+      )
+
+      navigate('/payment-success')
+    } catch (error) {
       const cleanCardNumber = cardData.cardNumber.replace(/\s/g, '')
 
-      if (cleanCardNumber === '4242424242424242') {
-        const paidOrder = {
-          id: 'ORD-' + Date.now(),
-          ...checkoutData,
-          paymentStatus: 'Paid',
-          orderStatus: 'Placed',
-          transactionId: 'pi_test_' + Date.now(),
-          paidAt: new Date().toISOString(),
-        }
-
-        localStorage.setItem('latestOrder', JSON.stringify(paidOrder))
-
-        const oldOrders = JSON.parse(localStorage.getItem('orders')) || []
-        localStorage.setItem('orders', JSON.stringify([paidOrder, ...oldOrders]))
-
-        navigate('/payment-success')
-      } else if (cleanCardNumber === '4000000000009995') {
+      if (cleanCardNumber === '4000000000009995') {
         navigate('/payment-cancel?reason=card_declined')
-      } else {
-        alert('Use Stripe test card 4242 4242 4242 4242 for successful payment.')
-        setIsProcessing(false)
+        return
       }
-    }, 1500)
+
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          'Payment failed.'
+      )
+
+      setIsProcessing(false)
+    }
+  }
+
+  const handleCancelPayment = async () => {
+    try {
+      const token = localStorage.getItem('token')
+
+      if (simulationOrderId && token) {
+        await axios.patch(
+          `${PAYMENT_API_URL}/simulation/cancel/${simulationOrderId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+      }
+    } catch (error) {
+      console.log(error.response?.data?.message || error.message)
+    } finally {
+      navigate('/payment-cancel')
+    }
   }
 
   if (!checkoutData) {
@@ -66,6 +128,7 @@ const StripeSimulationPage = () => {
       <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">No checkout data found</h1>
+
           <button
             onClick={() => navigate('/cart')}
             className="px-6 py-3 rounded-full bg-purple-400 text-black font-bold"
@@ -82,14 +145,16 @@ const StripeSimulationPage = () => {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="bg-[#635bff] text-white px-6 py-5">
           <h1 className="text-2xl font-bold">Stripe Test Checkout</h1>
-          <p className="text-sm opacity-90">Simulation only — no real money charged</p>
+          <p className="text-sm opacity-90">
+            Simulation only — no real money charged
+          </p>
         </div>
 
         <div className="p-6">
           <div className="mb-6 rounded-xl bg-gray-50 p-4 border">
             <p className="text-gray-500 text-sm">Total Amount</p>
             <h2 className="text-3xl font-bold text-gray-900">
-              PKR {checkoutData.total.toLocaleString()}
+              PKR {Number(checkoutData.total || 0).toLocaleString()}
             </h2>
           </div>
 
@@ -98,6 +163,9 @@ const StripeSimulationPage = () => {
             <p>4242 4242 4242 4242</p>
             <p>Expiry: any future date</p>
             <p>CVC: any 3 digits</p>
+
+            <p className="font-bold mt-3 mb-1">Decline test:</p>
+            <p>4000 0000 0000 9995</p>
           </div>
 
           <div className="space-y-4">
@@ -141,12 +209,15 @@ const StripeSimulationPage = () => {
             disabled={isProcessing}
             className="w-full mt-6 py-4 rounded-xl bg-[#635bff] text-white font-bold hover:bg-[#5146e8] transition disabled:opacity-60"
           >
-            {isProcessing ? 'Processing...' : `Pay PKR ${checkoutData.total.toLocaleString()}`}
+            {isProcessing
+              ? 'Processing payment...'
+              : `Pay PKR ${Number(checkoutData.total || 0).toLocaleString()}`}
           </button>
 
           <button
-            onClick={() => navigate('/payment-cancel')}
-            className="w-full mt-3 py-3 rounded-xl border text-gray-700 font-semibold hover:bg-gray-50 transition"
+            onClick={handleCancelPayment}
+            disabled={isProcessing}
+            className="w-full mt-3 py-3 rounded-xl border text-gray-700 font-semibold hover:bg-gray-50 transition disabled:opacity-60"
           >
             Cancel Payment
           </button>

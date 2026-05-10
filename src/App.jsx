@@ -25,8 +25,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AddProduct from './pages/admin/AddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminProductDetails from './pages/admin/AdminProductDetails'
-import AdminCategories from './pages/admin/AdminCategories'
-import AdminCategoryForm from "./pages/admin/AdminCategoryForm";
+// import AdminCategories from './pages/admin/AdminCategories'
+// import AdminCategoryForm from "./pages/admin/AdminCategoryForm";
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminOrders from "./pages/admin/AdminOrders";
 import AboutPage from './pages/public/About'
@@ -74,10 +74,10 @@ function App() {
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add" element={<AddProduct />} />
         <Route path="/admin/products/:id" element={<AdminProductDetails />} />
-        <Route path="/admin/categories" element={<AdminCategories />} />
+        {/* <Route path="/admin/categories" element={<AdminCategories />} /> */}
         <Route path="/admin/products/edit/:id" element={<AdminProductDetails />} />
-        <Route path="/admin/categories/add" element={<AdminCategoryForm />} />
-        <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} />
+        {/* <Route path="/admin/categories/add" element={<AdminCategoryForm />} /> */}
+        {/* <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} /> */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/checkout" element={<CheckoutPage />} />

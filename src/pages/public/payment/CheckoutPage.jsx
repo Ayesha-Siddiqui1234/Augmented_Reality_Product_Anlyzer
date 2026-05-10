@@ -5,6 +5,9 @@
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
+const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
 
 import Navbar from '../../../components/Navbar'
 
@@ -68,33 +71,66 @@ const CheckoutPage = () => {
     }))
   }
 
-  const handleProceedToPayment = () => {
-    if (
-      !formData.fullName ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.address ||
-      !formData.city
-    ) {
-      alert('Please fill all delivery details.')
+  const handleProceedToPayment = async () => {
+  if (
+    !formData.fullName ||
+    !formData.email ||
+    !formData.phone ||
+    !formData.address ||
+    !formData.city
+  ) {
+    alert('Please fill all delivery details.')
+    return
+  }
+
+  try {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      alert('Please login first.')
+      navigate('/login', { state: { from: '/checkout' } })
       return
     }
 
-    const checkoutData = {
-      customer: formData,
-      user: currentUser?._id,
-      items: cartItems,
-      subtotal: cartTotal,
-      tax,
-      total: grandTotal,
-      paymentMethod: 'Stripe Simulation',
-      createdAt: new Date().toISOString(),
-    }
+    const response = await axios.post(
+      `${PAYMENT_API_URL}/simulation/create-order`,
+      {
+        shippingAddress: formData,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
 
-    localStorage.setItem('checkoutData', JSON.stringify(checkoutData))
+    const order = response.data.order
+
+    localStorage.setItem('simulationOrderId', order._id)
+
+    localStorage.setItem(
+      'checkoutData',
+      JSON.stringify({
+        orderId: order._id,
+        customer: formData,
+        subtotal: order.subtotal,
+        tax: order.tax,
+        shippingFee: order.shippingFee,
+        total: order.total,
+        paymentMethod: 'Stripe Simulation',
+        createdAt: order.createdAt,
+      })
+    )
 
     navigate('/stripe-simulation')
+  } catch (error) {
+    alert(
+      error.response?.data?.message ||
+        error.message ||
+        'Failed to create order.'
+    )
   }
+}
 
   if (loading && cartItems.length === 0) {
     return (

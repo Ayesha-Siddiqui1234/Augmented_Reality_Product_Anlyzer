@@ -1,4 +1,14 @@
 import React, { useState } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import {
+  createProduct,
+  selectAdminProductsLoading,
+  selectAdminProductsError,
+} from "../../features/admin/adminProductSlice";
+
 import {
   ArrowLeft,
   Upload,
@@ -22,6 +32,12 @@ const categories = [
 ];
 
 const AddProduct = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const loading = useSelector(selectAdminProductsLoading);
+  const error = useSelector(selectAdminProductsError);
+
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -44,13 +60,30 @@ const AddProduct = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Later you will send this data to backend/MongoDB API.
-    console.log("New Product Data:", formData);
+    const productPayload = {
+      name: formData.name,
+      category: formData.category,
+      price: Number(formData.price),
+      stock: Number(formData.stock),
+      shortDescription: formData.shortDescription,
+      description: formData.description,
+      imageUrl: formData.imageUrl,
+      modelUrl: formData.modelUrl,
+      arEnabled: formData.arEnabled,
+      featured: formData.featured,
+    };
 
-    alert("Product added successfully!");
+    const result = await dispatch(createProduct(productPayload));
+
+    if (createProduct.fulfilled.match(result)) {
+      alert("Product added successfully!");
+      navigate("/admin/products");
+    } else {
+      alert(result.payload || "Failed to add product");
+    }
   };
 
   return (
@@ -160,6 +193,7 @@ const AddProduct = () => {
                       value={formData.price}
                       onChange={handleChange}
                       placeholder="12000"
+                      min="0"
                       className="w-full rounded-2xl border border-[#9955ff]/20 bg-[#0f0d1c]/80 px-4 py-3 pl-11 text-white outline-none transition placeholder:text-[#77708f] focus:border-[#9955ff]/60 focus:shadow-[0_0_25px_rgba(153,85,255,0.22)]"
                       required
                     />
@@ -181,6 +215,7 @@ const AddProduct = () => {
                       value={formData.stock}
                       onChange={handleChange}
                       placeholder="25"
+                      min="0"
                       className="w-full rounded-2xl border border-[#9955ff]/20 bg-[#0f0d1c]/80 px-4 py-3 pl-11 text-white outline-none transition placeholder:text-[#77708f] focus:border-[#9955ff]/60 focus:shadow-[0_0_25px_rgba(153,85,255,0.22)]"
                       required
                     />
@@ -230,6 +265,7 @@ const AddProduct = () => {
                     rows="6"
                     placeholder="Write complete product details here..."
                     className="w-full resize-none rounded-2xl border border-[#9955ff]/20 bg-[#0f0d1c]/80 px-4 py-3 text-white outline-none transition placeholder:text-[#77708f] focus:border-[#9955ff]/60 focus:shadow-[0_0_25px_rgba(153,85,255,0.22)]"
+                    required
                   />
                 </div>
               </div>
@@ -409,12 +445,19 @@ const AddProduct = () => {
                 </label>
               </div>
 
+              {error && (
+                <p className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#9955ff] to-[#7c3cff] px-5 py-4 text-sm font-bold text-white shadow-[0_0_35px_rgba(153,85,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_55px_rgba(153,85,255,0.55)]"
+                disabled={loading}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#9955ff] to-[#7c3cff] px-5 py-4 text-sm font-bold text-white shadow-[0_0_35px_rgba(153,85,255,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_55px_rgba(153,85,255,0.55)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Save size={18} />
-                Save Product
+                {loading ? "Saving..." : "Save Product"}
               </button>
             </div>
           </aside>
