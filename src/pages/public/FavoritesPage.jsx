@@ -1,9 +1,11 @@
 // src/pages/public/FavoritesPage.jsx
 
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { selectFavoriteProductsByUser } from '../../features/favorites/favoriteSlice'
 import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
+import { selectIsAuthenticated, selectCurrentUser } from '../../features/auth/authSlice'
 import Navbar from '../../components/Navbar'
 
 const ProductCard = ({ product }) => {
@@ -86,12 +88,114 @@ const FavoritesPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   
-  const userId = 'user-1' // TODO: Get from auth
+  const [dbFavorites, setDbFavorites] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const currentUser = useSelector(selectCurrentUser)
+  const userId = currentUser?._id || currentUser?.id || 'user-1'
+  
+  // Fetch favorites from backend database
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      // Check if user is authenticated
+      if (!isAuthenticated) {
+        navigate('/login')
+        return
+      }
+
+      try {
+        setLoading(true)
+        const token = localStorage.getItem('token')
+        
+        const response = await fetch('http://localhost:5000/api/favorites', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          // Transform backend data to match frontend format
+          const transformedFavorites = data.data.favorites.map(fav => {
+            const product = fav.product
+            return {
+              id: product._id,
+              _id: product._id,
+              name: product.name,
+              slug: product.name.toLowerCase().replace(/\s+/g, '-'),
+              description: product.description,
+              price: product.price,
+              originalPrice: product.price,
+              category: product.subcategory || product.category,
+              categoryLabel: product.subcategory || product.category,
+              imageUrl: product.images?.[0] || '',
+              images: product.images || [],
+              glbModel: product.glbModel || '',
+              arSupported: !!product.glbModel,
+              isNew: false,
+              stock: product.stock,
+              brand: product.brand,
+              specifications: product.specifications
+            }
+          })
+          setDbFavorites(transformedFavorites)
+        }
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFavorites()
+  }, [isAuthenticated, navigate])
+
   const favorites = useSelector(state => selectFavoriteProductsByUser(state, userId))
 
   const removeAll = () => {
     favorites.forEach(p => dispatch(toggleFavorite({ userId, productId: p.id })))
   }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen text-purple-400 flex items-center justify-center pt-24" style={{background:'#09070f'}}>
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-lg">Loading your favorites...</p>
+          </div>
+        </main>
+      </>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen text-purple-400 flex items-center justify-center pt-24" style={{background:'#09070f'}}>
+          <div className="text-center">
+            <p className="text-red-400 text-lg mb-4">❌ {error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
+            >
+              Try Again
+            </button>
+          </div>
+        </main>
+      </>
+    )
+  }
+
+  // Use database favorites
+  const displayFavorites = dbFavorites
 
   return (
     <>
@@ -167,16 +271,16 @@ const FavoritesPage = () => {
               <p className="text-purple-400/60 text-xs tracking-[0.4em] uppercase mb-3">Your Collection</p>
               <h1 className="text-4xl md:text-5xl font-extrabold text-purple-400 leading-tight flex items-center gap-4">
                 My Favorites
-                {favorites.length > 0 && (
+                {displayFavorites.length > 0 && (
                   <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-400 text-black text-lg font-bold shadow-[0_0_20px_rgba(153,85,255,0.4)]">
-                    {favorites.length}
+                    {displayFavorites.length}
                   </span>
                 )}
               </h1>
               <p className="mt-3 text-purple-100/60 text-sm">Products you have saved for later</p>
             </div>
             
-            {favorites.length > 0 && (
+            {displayFavorites.length > 0 && (
               <button
                 onClick={removeAll}
                 className="px-6 py-3 rounded-full border border-red-400/30 bg-red-400/5 text-red-400 font-semibold text-sm hover:bg-red-400/10 transition-all"
@@ -187,7 +291,7 @@ const FavoritesPage = () => {
           </div>
 
           {/* Empty State or Products Grid */}
-          {favorites.length === 0 ? (
+          {displayFavorites.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
               <div className="w-24 h-24 rounded-full bg-purple-400/10 border-2 border-purple-400/30 flex items-center justify-center text-5xl">
                 ♡
@@ -208,7 +312,7 @@ const FavoritesPage = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-                {favorites.map(product => (
+                {displayFavorites.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
