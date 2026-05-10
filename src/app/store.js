@@ -5,6 +5,7 @@ import categoriesReducer from '../features/categories/categorySlice.js'
 import favoritesReducer from '../features/favorites/favoriteSlice.js'
 import cartReducer from '../features/cart/cartSlice.js'
 import usersReducer from '../features/users/userSlice.js'
+import adminProductsReducer from '../features/admin/adminProductSlice.js'
 // import adminReducer from '../features/admin/adminSlice.js'
 import authReducer from '../features/auth/authSlice.js'
 
@@ -17,7 +18,7 @@ export const store = configureStore({
     categories: categoriesReducer,
     favorites: favoritesReducer,
     cart: cartReducer,
-    users: usersReducer,
+    adminProducts: adminProductsReducer,
     // admin: adminReducer,
   },
 })

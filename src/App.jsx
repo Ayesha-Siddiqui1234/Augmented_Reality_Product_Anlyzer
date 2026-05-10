@@ -1,6 +1,11 @@
 // src/App.jsx
 
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { fetchProducts } from './features/products/productSlice'
+import { fetchFavorites } from './features/favorites/favoriteSlice'
+import { selectIsAuthenticated } from './features/auth/authSlice'
 import CheckoutPage from './pages/public/payment/CheckoutPage'
 import PaymentCancelPage from './pages/public/payment/PaymentCancel'
 import PaymentSuccessPage from './pages/public/payment/PaymentSuccess'
@@ -36,6 +41,21 @@ const Placeholder = ({ title, owner }) => (
 
 
 function App() {
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+
+  // Fetch products on app load
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [dispatch])
+
+  // Fetch favorites if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchFavorites())
+    }
+  }, [dispatch, isAuthenticated])
+
   return (
     <BrowserRouter>
       <Routes>
