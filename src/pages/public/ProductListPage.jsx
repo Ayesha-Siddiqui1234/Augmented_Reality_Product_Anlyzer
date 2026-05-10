@@ -1,5 +1,6 @@
 // src/pages/public/ProductListPage.jsx
 
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { selectFilteredProducts, setSortBy } from '../../features/products/productSlice'
@@ -85,6 +86,9 @@ const ProductCard = ({ product }) => {
 
 const ProductListPage = () => {
   const dispatch = useDispatch()
+  const [dbProducts, setDbProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const products = useSelector(selectFilteredProducts)
   const categories = useSelector(s => s.categories.items)
@@ -92,11 +96,90 @@ const ProductListPage = () => {
   const selectedCategory = useSelector(s => s.products.selectedCategory)
   const sortBy = useSelector(s => s.products.sortBy)
 
+  // Fetch products from backend database
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('http://localhost:5000/api/products')
+        const data = await response.json()
+        
+        if (data.success) {
+          // Transform backend data to match frontend format
+          const transformedProducts = data.data.products.map(p => ({
+            id: p._id,
+            _id: p._id,
+            name: p.name,
+            slug: p.name.toLowerCase().replace(/\s+/g, '-'),
+            description: p.description,
+            price: p.price,
+            originalPrice: p.price,
+            category: p.subcategory || p.category,
+            categoryLabel: p.subcategory || p.category,
+            imageUrl: p.images?.[0] || '',
+            images: p.images || [],
+            glbModel: p.glbModel || '',
+            arSupported: !!p.glbModel,
+            isNew: false,
+            stock: p.stock,
+            brand: p.brand,
+            specifications: p.specifications
+          }))
+          setDbProducts(transformedProducts)
+        }
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
   const clearAll = () => {
     dispatch(setSearchQuery(''))
     dispatch(setSelectedCategory('all'))
     dispatch(setSortBy('default'))
   }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen mt-[40px] text-purple-400 flex items-center justify-center" style={{background:'#09070f'}}>
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-lg">Loading products from database...</p>
+          </div>
+        </main>
+      </>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen mt-[40px] text-purple-400 flex items-center justify-center" style={{background:'#09070f'}}>
+          <div className="text-center">
+            <p className="text-red-400 text-lg mb-4">❌ Error: {error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
+            >
+              Try Again
+            </button>
+          </div>
+        </main>
+      </>
+    )
+  }
+
+  // Use database products instead of Redux products
+  const displayProducts = dbProducts
 
   return (
     <>
@@ -182,7 +265,7 @@ const ProductListPage = () => {
               All Products
             </h1>
             <p className="text-purple-100/60 text-base max-w-2xl mx-auto">
-              {products.length} product{products.length !== 1 ? 's' : ''} available with AR preview
+              {displayProducts.length} product{displayProducts.length !== 1 ? 's' : ''} available with AR preview
             </p>
           </div>
 
@@ -262,7 +345,7 @@ const ProductListPage = () => {
           )}
 
           {/* Products Grid or Empty State */}
-          {products.length === 0 ? (
+          {displayProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
               <span className="text-6xl mb-2">🛋️</span>
               <h2 className="text-2xl font-bold text-purple-400">No products found</h2>
@@ -278,7 +361,7 @@ const ProductListPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map(product => (
+              {displayProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
