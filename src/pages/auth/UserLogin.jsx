@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { login, selectAuthLoading, selectAuthError } from '../../features/auth/authSlice'
-import PublicNavbar from '../../components/PublicNavbar'
+
 
 const UserLogin = () => {
   const navigate = useNavigate()

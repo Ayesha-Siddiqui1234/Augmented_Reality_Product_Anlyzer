@@ -1,7 +1,9 @@
-// src/pages/public/PaymentCancelPage.jsx
+// src/pages/public/payment/PaymentCancelPage.jsx
 
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import PublicNavbar from "../../../components/PublicNavbar";
+
+import Navbar from '../../../components/Navbar'
+
 const PaymentCancelPage = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -10,9 +12,9 @@ const PaymentCancelPage = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
 
-      <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center px-4">
+      <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center px-4 py-28">
         <div className="max-w-xl w-full rounded-2xl border border-red-400/30 bg-[#120d1d] p-8 text-center">
           <div className="w-20 h-20 rounded-full bg-red-400/20 text-red-300 flex items-center justify-center mx-auto text-4xl mb-6">
             ✕

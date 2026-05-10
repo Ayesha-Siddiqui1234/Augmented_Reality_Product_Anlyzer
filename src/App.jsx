@@ -5,7 +5,6 @@ import CheckoutPage from './pages/public/payment/CheckoutPage'
 import PaymentCancelPage from './pages/public/payment/PaymentCancel'
 import PaymentSuccessPage from './pages/public/payment/PaymentSuccess'
 import StripeSimulationPage from './pages/public/payment/StripeSimulation'
-
 import KashafNavbar from './components/Navbar'
 import ProductListPage from './pages/public/ProductListPage'
 import ProductDetailPage from './pages/public/ProductDetailPage'
@@ -39,18 +38,9 @@ const Placeholder = ({ title, owner }) => (
 function App() {
   return (
     <BrowserRouter>
-      {/* Kashaf's Futuristic Navbar - Member 1's work */}
-      {/* <KashafNavbar
-        isLoggedIn={false}
-        userName="User"
-      /> */}
-
-
-
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path='/about' element={<AboutPage/>} />
-
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/products/:slug" element={<ProductDetailPage />} />
         <Route path="/products/:slug/3d-view" element={<Product3DViewer />} />
@@ -60,7 +50,6 @@ function App() {
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/about" element={<Placeholder title="About Page" owner="Member 1" />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add" element={<AddProduct />} />
