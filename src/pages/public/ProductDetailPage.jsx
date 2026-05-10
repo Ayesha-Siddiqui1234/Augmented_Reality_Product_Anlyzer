@@ -49,21 +49,6 @@ const useReveal = (threshold = 0.15) => {
   return [ref, visible]
 }
 
-const StarRating = ({ rating }) => {
-  const full = Math.floor(rating || 0)
-  const half = (rating || 0) % 1 >= 0.5
-
-  return (
-    <span className="flex gap-0.5 text-purple-400 text-base">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i}>
-          {i < full ? '★' : i === full && half ? '⯨' : '☆'}
-        </span>
-      ))}
-    </span>
-  )
-}
-
 const ProductDetailPage = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -202,14 +187,13 @@ const ProductDetailPage = () => {
             color: #3b0764 !important;
           }
 
-          .light-theme .text-purple-300 {
-            color: #6d28d9 !important;
-          }
-
-          .light-theme .text-purple-100\\/60,
-          .light-theme .text-purple-100\\/50 {
-            color: #5b21b6 !important;
-          }
+            {/* Price */}
+            <div className="flex items-baseline gap-3">
+              <span className="text-4xl font-bold text-purple-400">PKR {product.price.toLocaleString()}</span>
+              {product.originalPrice > product.price && (
+                <span className="text-xl text-purple-400/30 line-through">PKR {product.originalPrice.toLocaleString()}</span>
+              )}
+            </div>
 
           .light-theme .text-purple-400\\/60,
           .light-theme .text-purple-400\\/50 {
@@ -220,87 +204,17 @@ const ProductDetailPage = () => {
             color: #9333ea !important;
           }
 
-          .light-theme .bg-\\[\\#09070f\\]\\/60,
-          .light-theme .bg-\\[\\#09070f\\]\\/40,
-          .light-theme .bg-\\[\\#09070f\\]\\/95 {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-color: rgba(139, 92, 246, 0.3) !important;
-          }
-
-          .light-theme .border-purple-400\\/15,
-          .light-theme .border-purple-400\\/10,
-          .light-theme .border-purple-400\\/20,
-          .light-theme .border-purple-400\\/30 {
-            border-color: rgba(139, 92, 246, 0.3) !important;
-          }
-
-          .grid-bg {
-            background-image:
-              linear-gradient(rgba(153,85,255,0.04) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(153,85,255,0.04) 1px, transparent 1px);
-            background-size: 60px 60px;
-          }
-
-          .card-glow:hover {
-            box-shadow: 0 0 40px rgba(153,85,255,0.2), 0 20px 60px rgba(0,0,0,0.5);
-            transform: translateY(-6px);
-            border-color: rgba(153,85,255,0.4);
-          }
-
-          .card-glow {
-            transition: all 0.4s ease;
-          }
-
-          ::-webkit-scrollbar {
-            width: 4px;
-          }
-
-          ::-webkit-scrollbar-track {
-            background: #000;
-          }
-
-          ::-webkit-scrollbar-thumb {
-            background: #9955ff;
-            border-radius: 2px;
-          }
-        `}</style>
-
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-6 py-28">
-          {/* Product Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            {/* Left: Image Gallery */}
-            <div className="space-y-4">
-              {/* Main Image */}
-              <div className="relative rounded-2xl overflow-hidden border border-purple-400/15 bg-[#09070f]/60 backdrop-blur-md aspect-square">
-                <img
-                  src={images[selectedImage]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex gap-2">
-                  {product.isNew && (
-                    <span className="px-3 py-1 text-xs font-bold tracking-widest rounded-full bg-purple-400 text-black uppercase">
-                      New
-                    </span>
-                  )}
-
-                  {discount > 0 && (
-                    <span className="px-3 py-1 text-xs font-bold tracking-widest rounded-full bg-[#000]/60 text-purple-400 border border-purple-400/30 uppercase">
-                      -{discount}%
-                    </span>
-                  )}
-
-                  {product.arSupported && (
-                    <span className="px-3 py-1 text-xs font-bold tracking-widest rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 uppercase">
-                      AR Ready
-                    </span>
-                  )}
-                </div>
-
-                {/* Favorite Button */}
+            {/* Quantity */}
+            <div>
+              <p className="text-sm font-semibold text-purple-300 mb-3">Quantity</p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 rounded-full border border-purple-400/30 bg-purple-400/5 text-purple-400 font-bold hover:bg-purple-400/10 transition"
+                >
+                  −
+                </button>
+                <span className="w-16 text-center text-lg font-bold text-purple-400">{quantity}</span>
                 <button
                   onClick={handleToggleFavorite}
                   className={`absolute top-4 right-4 w-12 h-12 rounded-full flex items-center justify-center text-2xl backdrop-blur-md border transition-all ${
@@ -357,11 +271,24 @@ const ProductDetailPage = () => {
                 </span>
               </div>
 
-              {/* Price */}
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-purple-400">
-                  PKR {Number(product.price || 0).toLocaleString()}
-                </span>
+        {/* Tabs Section */}
+        <div className="mb-20">
+          {/* Tab Headers */}
+          <div className="flex gap-4 border-b border-purple-400/10 mb-8">
+            {['description', 'specifications'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-3 font-semibold text-sm capitalize transition-all ${
+                  activeTab === tab
+                    ? 'text-purple-400 border-b-2 border-purple-400'
+                    : 'text-purple-400/60 hover:text-purple-400'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
 
                 {originalPrice > product.price && (
                   <span className="text-xl text-purple-400/30 line-through">
@@ -446,159 +373,9 @@ const ProductDetailPage = () => {
                   </span>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={product.stock <= 0}
-                  className={`flex-1 py-4 rounded-full font-bold text-sm transition-all duration-300 shadow-[0_0_40px_rgba(153,85,255,0.3)] ${
-                    product.stock <= 0
-                      ? 'bg-red-400/20 text-red-300 cursor-not-allowed'
-                      : 'bg-purple-400 text-black hover:bg-purple-300'
-                  }`}
-                >
-                  {product.stock <= 0 ? 'Out of Stock' : '🛒 Add to Cart'}
-                </button>
-
-                {product.arSupported && (
-                  <button
-                    onClick={() => navigate(`/products/${slug}/3d-view`)}
-                    className="flex-1 py-4 rounded-full border-2 border-purple-400 bg-purple-400/10 text-purple-400 font-bold text-sm hover:bg-purple-400 hover:text-black transition-all duration-300"
-                  >
-                    🧊 View in 3D
-                  </button>
-                )}
-              </div>
-
-              {/* Features */}
-              <div className="grid grid-cols-2 gap-3 pt-4">
-                <div className="flex items-center gap-2 text-sm text-purple-100/60">
-                  <span className="text-purple-400">✓</span>
-                  Free Delivery
-                </div>
-                <div className="flex items-center gap-2 text-sm text-purple-100/60">
-                  <span className="text-purple-400">✓</span>
-                  30-Day Returns
-                </div>
-                <div className="flex items-center gap-2 text-sm text-purple-100/60">
-                  <span className="text-purple-400">✓</span>
-                  Secure Payment
-                </div>
-                <div className="flex items-center gap-2 text-sm text-purple-100/60">
-                  <span className="text-purple-400">✓</span>
-                  Warranty Included
-                </div>
-              </div>
-            </div>
+            )}
           </div>
-
-          {/* Tabs Section */}
-          <div className="mb-20">
-            {/* Tab Headers */}
-            <div className="flex gap-4 border-b border-purple-400/10 mb-8">
-              {['description', 'specifications', 'reviews'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 font-semibold text-sm capitalize transition-all ${
-                    activeTab === tab
-                      ? 'text-purple-400 border-b-2 border-purple-400'
-                      : 'text-purple-400/60 hover:text-purple-400'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Content */}
-            <div className="rounded-2xl border border-purple-400/15 bg-[#09070f]/60 backdrop-blur-md p-8">
-              {activeTab === 'description' && (
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-bold text-purple-400 mb-4">
-                    Product Description
-                  </h3>
-
-                  <p className="text-purple-100/60 leading-relaxed">
-                    {product.description}
-                  </p>
-
-                  {product.tags && product.tags.length > 0 && (
-                    <div className="pt-4">
-                      <p className="text-sm font-semibold text-purple-300 mb-3">
-                        Tags
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {product.tags.map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 rounded-full border border-purple-400/20 bg-purple-400/5 text-purple-400 text-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'specifications' && (
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-bold text-purple-400 mb-4">
-                    Specifications
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex justify-between py-3 border-b border-purple-400/10">
-                      <span className="text-purple-400/60">Brand</span>
-                      <span className="text-purple-300 font-semibold">
-                        {product.brand || 'N/A'}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between py-3 border-b border-purple-400/10">
-                      <span className="text-purple-400/60">Material</span>
-                      <span className="text-purple-300 font-semibold">
-                        {product.material || 'N/A'}
-                      </span>
-                    </div>
-
-                    {product.dimensions && (
-                      <>
-                        <div className="flex justify-between py-3 border-b border-purple-400/10">
-                          <span className="text-purple-400/60">Width</span>
-                          <span className="text-purple-300 font-semibold">
-                            {product.dimensions.width}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between py-3 border-b border-purple-400/10">
-                          <span className="text-purple-400/60">Height</span>
-                          <span className="text-purple-300 font-semibold">
-                            {product.dimensions.height}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between py-3 border-b border-purple-400/10">
-                          <span className="text-purple-400/60">Depth</span>
-                          <span className="text-purple-300 font-semibold">
-                            {product.dimensions.depth}
-                          </span>
-                        </div>
-                      </>
-                    )}
-
-                    <div className="flex justify-between py-3 border-b border-purple-400/10">
-                      <span className="text-purple-400/60">AR Support</span>
-                      <span className="text-purple-300 font-semibold">
-                        {product.arSupported ? 'Yes' : 'No'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
+        </div>
 
               {activeTab === 'reviews' && (
                 <div className="space-y-6">

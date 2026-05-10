@@ -627,11 +627,15 @@ const CartPage = () => {
   }
 
   const handleCheckout = () => {
-    if (!isAuthenticated || !currentUser) {
-      navigate('/login', { state: { from: '/cart' } })
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Save current cart state and redirect to login
+      alert('Please login to proceed with checkout')
+      navigate('/login', { state: { from: '/checkout' } })
       return
     }
-
+    
+    // User is authenticated, proceed directly to payment/checkout
     navigate('/checkout')
   }
 
@@ -837,8 +841,17 @@ const CartPage = () => {
                     disabled={loading}
                     className="w-full py-3 md:py-4 rounded-full bg-purple-400 text-black font-bold text-xs md:text-sm hover:bg-purple-300 transition-all duration-300 shadow-[0_0_40px_rgba(153,85,255,0.3)] mb-3 md:mb-4 flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    <span>🔒</span>
-                    <span>Proceed to Checkout</span>
+                    {isAuthenticated ? (
+                      <>
+                        <span>💳</span>
+                        <span>Proceed to Payment</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🔐</span>
+                        <span>Proceed to Checkout</span>
+                      </>
+                    )}
                   </button>
 
                   <button
