@@ -1,7 +1,7 @@
 // src/pages/public/HomePage.jsx
 import { useEffect, useRef, useState } from 'react'
 import TextType from '../../components/TextType.jsx'
-import PublicNavbar from '../../components/PublicNavbar.jsx'
+
 import '../../styles/light-theme.css'
 import Navbar from '../../components/Navbar.jsx'
 

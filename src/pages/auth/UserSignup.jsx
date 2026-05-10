@@ -11,7 +11,7 @@ const UserSignup = () => {
   const dispatch = useDispatch()
   const loading = useSelector(selectAuthLoading)
   const authError = useSelector(selectAuthError)
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -32,7 +32,7 @@ const UserSignup = () => {
 
   const validate = () => {
     const newErrors = {}
-    
+
     if (!formData.fullName.trim()) newErrors.fullName = 'Name is required'
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
@@ -59,16 +59,16 @@ const UserSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const newErrors = validate()
-    
+
     if (Object.keys(newErrors).length === 0) {
       try {
         await dispatch(signup({
-          name: formData.fullName,
+          fullName: formData.fullName,
           email: formData.email,
-          phone: formData.phone,
-          password: formData.password
-        })).unwrap()
-        
+          phoneNumber: formData.phone,
+          password: formData.password,
+        })).unwrap().unwrap()
+
         alert('Account created successfully! Please login.')
         navigate('/login')
       } catch (error) {
@@ -82,9 +82,9 @@ const UserSignup = () => {
   return (
     <>
       {/* <PublicNavbar /> */}
-      
-      <main className="min-h-screen flex items-center justify-center px-6 py-12" style={{background:'#09070f'}}>
-        
+
+      <main className="min-h-screen flex items-center justify-center px-6 py-12" style={{ background: '#09070f' }}>
+
         {/* Global Styles */}
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
@@ -114,7 +114,7 @@ const UserSignup = () => {
         {/* Signup Form */}
         <div className="w-full max-w-md">
           <div className="rounded-3xl border border-purple-400/20 bg-[#09070f]/60 backdrop-blur-md p-8 shadow-[0_0_60px_rgba(153,85,255,0.2)]">
-            
+
             {/* Header */}
             <div className="text-center mb-8">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-[0_0_30px_rgba(153,85,255,0.4)]">
@@ -126,7 +126,7 @@ const UserSignup = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              
+
               {/* Error Message */}
               {(errors.submit || authError) && (
                 <div className="p-4 rounded-xl bg-red-400/10 border border-red-400/30">
@@ -136,7 +136,7 @@ const UserSignup = () => {
                   </p>
                 </div>
               )}
-              
+
               {/* Full Name */}
               <div>
                 <label className="block text-purple-300 text-sm font-semibold mb-2">
@@ -148,9 +148,8 @@ const UserSignup = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.fullName ? 'border-red-400/50' : 'border-purple-400/20'
-                  } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.fullName ? 'border-red-400/50' : 'border-purple-400/20'
+                    } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
                 />
                 {errors.fullName && (
                   <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>
@@ -168,9 +167,8 @@ const UserSignup = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your.email@example.com"
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.email ? 'border-red-400/50' : 'border-purple-400/20'
-                  } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-400/50' : 'border-purple-400/20'
+                    } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
                 />
                 {errors.email && (
                   <p className="text-red-400 text-xs mt-1">{errors.email}</p>
@@ -189,9 +187,8 @@ const UserSignup = () => {
                   onChange={handleChange}
                   placeholder="03001234567"
                   maxLength="11"
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.phone ? 'border-red-400/50' : 'border-purple-400/20'
-                  } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-400/50' : 'border-purple-400/20'
+                    } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
                 />
                 {errors.phone && (
                   <p className="text-red-400 text-xs mt-1">{errors.phone}</p>
@@ -210,9 +207,8 @@ const UserSignup = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Create a strong password"
-                    className={`w-full px-4 py-3 rounded-xl border ${
-                      errors.password ? 'border-red-400/50' : 'border-purple-400/20'
-                    } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
+                    className={`w-full px-4 py-3 rounded-xl border ${errors.password ? 'border-red-400/50' : 'border-purple-400/20'
+                      } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
                   />
                   <button
                     type="button"
@@ -238,9 +234,8 @@ const UserSignup = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter your password"
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.confirmPassword ? 'border-red-400/50' : 'border-purple-400/20'
-                  } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.confirmPassword ? 'border-red-400/50' : 'border-purple-400/20'
+                    } bg-purple-400/5 text-purple-100 placeholder-purple-400/40 text-sm focus:outline-none focus:border-purple-400/60 focus:shadow-[0_0_20px_rgba(153,85,255,0.2)] transition`}
                 />
                 {errors.confirmPassword && (
                   <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>

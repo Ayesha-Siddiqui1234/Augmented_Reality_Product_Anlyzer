@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectProductBySlug } from '../../features/products/productSlice'
-import PublicNavbar from '../../components/PublicNavbar'
 
 const ARPreview = () => {
   const { slug } = useParams()

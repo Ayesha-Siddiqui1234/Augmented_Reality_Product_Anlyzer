@@ -1,36 +1,68 @@
 // src/pages/public/CheckoutPage.jsx
 
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
+// src/pages/public/payment/CheckoutPage.jsx
+
+import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+
+import Navbar from '../../../components/Navbar'
+
 import {
-  selectCartItemsByUser,
-  selectCartTotalByUser,
-  clearCart,
-} from "../../../features/cart/cartSlice";
-import PublicNavbar from "../../../components/PublicNavbar";
+  fetchCart,
+  selectCartItems,
+  selectCartSummary,
+  selectCartLoading,
+} from '../../../features/cart/cartSlice'
 
-
+import {
+  selectCurrentUser,
+  selectIsAuthenticated,
+} from '../../../features/auth/authSlice'
 const CheckoutPage = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const userId = 'user-1'
 
-  const cartItems = useSelector(state => selectCartItemsByUser(state, userId))
-  const cartTotal = useSelector(state => selectCartTotalByUser(state, userId))
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const currentUser = useSelector(selectCurrentUser)
 
-  const tax = Math.round(cartTotal * 0.18)
-  const grandTotal = cartTotal + tax
+  const cartItems = useSelector(selectCartItems)
+  const cartSummary = useSelector(selectCartSummary)
+  const loading = useSelector(selectCartLoading)
+
+  const cartTotal = cartSummary?.subtotal || 0
+  const tax = cartSummary?.tax ?? Math.round(cartTotal * 0.18)
+  const grandTotal = cartSummary?.total ?? cartTotal + tax
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
+    fullName: currentUser?.fullName || '',
+    email: currentUser?.email || '',
     phone: '',
     address: '',
     city: '',
   })
 
+  useEffect(() => {
+    if (!isAuthenticated || !currentUser) {
+      navigate('/login', { state: { from: '/checkout' } })
+      return
+    }
+
+    dispatch(fetchCart())
+  }, [dispatch, isAuthenticated, currentUser, navigate])
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || currentUser.fullName || '',
+        email: prev.email || currentUser.email || '',
+      }))
+    }
+  }, [currentUser])
+
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }))
@@ -50,6 +82,7 @@ const CheckoutPage = () => {
 
     const checkoutData = {
       customer: formData,
+      user: currentUser?._id,
       items: cartItems,
       subtotal: cartTotal,
       tax,
@@ -63,13 +96,32 @@ const CheckoutPage = () => {
     navigate('/stripe-simulation')
   }
 
+  if (loading && cartItems.length === 0) {
+    return (
+      <>
+        <Navbar />
+
+        <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-5xl mb-4 animate-pulse">🛒</div>
+            <h1 className="text-3xl font-bold mb-4">Loading checkout...</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
+
   if (cartItems.length === 0) {
     return (
       <>
-        <PublicNavbar />
+        <Navbar />
+
         <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center">
-          <div className="text-center">
+          <div className="text-center px-4">
             <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
+            <p className="text-purple-100/60 mb-6">
+              Add products to your cart before checkout.
+            </p>
             <button
               onClick={() => navigate('/products')}
               className="px-6 py-3 rounded-full bg-purple-400 text-black font-bold"
@@ -84,9 +136,9 @@ const CheckoutPage = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
 
-      <main className="min-h-screen bg-[#09070f] text-purple-400 px-4 py-10">
+      <main className="min-h-screen bg-[#09070f] text-purple-400 px-4 py-28">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-8">
             Checkout
@@ -103,7 +155,7 @@ const CheckoutPage = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Full Name"
-                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none"
+                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none text-purple-100"
                 />
 
                 <input
@@ -111,7 +163,7 @@ const CheckoutPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none"
+                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none text-purple-100"
                 />
 
                 <input
@@ -119,7 +171,7 @@ const CheckoutPage = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Phone"
-                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none"
+                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none text-purple-100"
                 />
 
                 <input
@@ -127,7 +179,7 @@ const CheckoutPage = () => {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="City"
-                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none"
+                  className="bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none text-purple-100"
                 />
 
                 <textarea
@@ -136,7 +188,7 @@ const CheckoutPage = () => {
                   onChange={handleChange}
                   placeholder="Complete Address"
                   rows="4"
-                  className="md:col-span-2 bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none resize-none"
+                  className="md:col-span-2 bg-black/40 border border-purple-400/20 rounded-xl px-4 py-3 outline-none resize-none text-purple-100"
                 />
               </div>
             </div>
@@ -146,12 +198,23 @@ const CheckoutPage = () => {
               <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
               <div className="space-y-3 mb-6">
-                {cartItems.map(item => (
-                  <div key={item.productId} className="flex justify-between text-sm text-purple-100/70">
-                    <span>{item.name} × {item.quantity}</span>
-                    <span>PKR {(item.price * item.quantity).toLocaleString()}</span>
-                  </div>
-                ))}
+                {cartItems.map((item) => {
+                  const productId = item.product || item.productId
+
+                  return (
+                    <div
+                      key={productId}
+                      className="flex justify-between gap-4 text-sm text-purple-100/70"
+                    >
+                      <span>
+                        {item.name} × {item.quantity}
+                      </span>
+                      <span>
+                        PKR {Number((item.price || 0) * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
+                  )
+                })}
               </div>
 
               <div className="border-t border-purple-400/20 pt-4 space-y-3">

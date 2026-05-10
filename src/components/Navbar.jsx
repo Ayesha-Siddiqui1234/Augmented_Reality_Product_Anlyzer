@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+
 import { ThemeSwitcherToggle } from "./ui/theme-switch-toggler";
+
+import { useSelector, useDispatch } from "react-redux";
+import {
+  logoutUser,
+  selectCurrentUser,
+  selectIsAuthenticated,
+} from "../features/auth/authSlice";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
@@ -292,20 +299,27 @@ const styles = `
     box-shadow: 0 0 10px rgba(153, 85, 255, 0.7);
   }
 
-  .fnb-user-avatar {
-    width: 30px;
-    height: 30px;
+  .fnb-user-icon-btn {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: #9955ff;
+    border: 1px solid rgba(153, 85, 255, 0.35);
+    background: rgba(153, 85, 255, 0.12);
+    color: #aa77ff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Exo 2', sans-serif;
-    color: #fff;
-    box-shadow: 0 0 14px rgba(153, 85, 255, 0.6);
-    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    z-index: 2;
+  }
+
+  .fnb-user-icon-btn:hover,
+  .fnb-user-icon-btn.open {
+    color: #cc99ff;
+    background: rgba(153, 85, 255, 0.2);
+    box-shadow: 0 0 18px rgba(153, 85, 255, 0.35);
   }
 
   .fnb-glow-line {
@@ -418,27 +432,36 @@ const NavIcon = ({ type }) => {
   return icons[type] || null;
 };
 
-export default function Navbar({
-  isLoggedIn = false,
-  userName = "Alex",
-  activePage = "home",
-}) {
+export default function Navbar({ activePage = "home" }) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const navRef = useRef(null);
 
-  // Get favorites count from Redux
-  const userId = 'user-1'; // TODO: Get from auth when implemented
-  const favCount = useSelector(s => s.favorites.items.filter(f => f.userId === userId).length);
+  const userId = currentUser?._id || currentUser?.id;
 
-  // Determine active page from location
-  const currentPage = location.pathname === '/' ? 'home'
-    : location.pathname.startsWith('/products') ? 'products'
-      : location.pathname === '/favorites' ? 'favorites'
-        : location.pathname === '/about' ? 'about'
-          : activePage;
+  const favCount = useSelector((s) =>
+    userId
+      ? s.favorites.items.filter((f) => f.userId === userId).length
+      : 0
+  );
+
+  const currentPage =
+    location.pathname === "/"
+      ? "home"
+      : location.pathname.startsWith("/products")
+        ? "products"
+        : location.pathname === "/favorites"
+          ? "favorites"
+          : location.pathname === "/about"
+            ? "about"
+            : activePage;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -452,6 +475,7 @@ export default function Navbar({
         setOpenDropdown(null);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -460,41 +484,72 @@ export default function Navbar({
     setOpenDropdown((prev) => (prev === name ? null : name));
   };
 
+  const handleLogout = async () => {
+    setOpenDropdown(null);
+    await dispatch(logoutUser());
+    navigate("/login");
+  };
+
   const productCategories = [
     {
       label: "All Products",
       icon: "grid",
       color: "rgba(153, 85, 255, 0.16)",
       iconColor: "#aa77ff",
-      onClick: () => { navigate('/products'); setOpenDropdown(null); }
+      onClick: () => {
+        navigate("/products");
+        setOpenDropdown(null);
+      },
     },
     {
       label: "New Arrivals",
       icon: "star",
       color: "rgba(153, 85, 255, 0.16)",
       iconColor: "#aa77ff",
-      onClick: () => { navigate('/products'); setOpenDropdown(null); }
+      onClick: () => {
+        navigate("/products");
+        setOpenDropdown(null);
+      },
     },
     {
       label: "Featured",
       icon: "heart",
       color: "rgba(153, 85, 255, 0.16)",
       iconColor: "#aa77ff",
-      onClick: () => { navigate('/products'); setOpenDropdown(null); }
+      onClick: () => {
+        navigate("/products");
+        setOpenDropdown(null);
+      },
     },
   ];
 
-  const userLinks = [
-  {
-    label: "Log Out",
-    icon: "logout",
-    danger: true,
-    onClick: () => {
-      setOpenDropdown(null);
-      navigate("/login");
-    },
-  },
-];
+  const userLinks = isAuthenticated
+    ? [
+        {
+          label: "Log Out",
+          icon: "logout",
+          danger: true,
+          onClick: handleLogout,
+        },
+      ]
+    : [
+        {
+          label: "Login",
+          icon: "login",
+          onClick: () => {
+            setOpenDropdown(null);
+            navigate("/login");
+          },
+        },
+        {
+          label: "Sign Up",
+          icon: "signup",
+          onClick: () => {
+            setOpenDropdown(null);
+            navigate("/signup");
+          },
+        },
+      ];
 
   return (
     <>
@@ -508,7 +563,15 @@ export default function Navbar({
         <div className={`fnb-inner${scrolled ? " scrolled" : ""}`}>
           <div className="fnb-glow-line" />
 
-          <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }} className="fnb-logo" aria-label="VizCraft">
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+            className="fnb-logo"
+            aria-label="VizCraft"
+          >
             <div className="fnb-logo-icon">◈</div>
             <span className="fnb-logo-text">
               Viz<span>Craft</span>
@@ -518,7 +581,7 @@ export default function Navbar({
           <ul className="fnb-nav" role="menubar">
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 className={`fnb-nav-link${currentPage === "home" ? " active" : ""}`}
                 role="menuitem"
               >
@@ -553,7 +616,10 @@ export default function Navbar({
                   >
                     <span
                       className="fnb-dropdown-icon"
-                      style={{ background: item.color, color: item.iconColor }}
+                      style={{
+                        background: item.color,
+                        color: item.iconColor,
+                      }}
                     >
                       <NavIcon type={item.icon} />
                     </span>
@@ -565,13 +631,21 @@ export default function Navbar({
 
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate('/favorites')}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    navigate("/login", { state: { from: "/favorites" } });
+                    return;
+                  }
+
+                  navigate("/favorites");
+                }}
                 className={`fnb-fav-btn${currentPage === "favorites" ? " active" : ""}`}
                 aria-label={`Favorites, ${favCount} items`}
                 role="menuitem"
               >
                 <NavIcon type="heart" />
                 Favorites
+
                 {favCount > 0 && (
                   <span className="fnb-fav-count" aria-hidden="true">
                     {favCount}
@@ -582,7 +656,7 @@ export default function Navbar({
 
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate('/about')}
+                onClick={() => navigate("/about")}
                 className={`fnb-nav-link${currentPage === "about" ? " active" : ""}`}
                 role="menuitem"
               >
@@ -599,7 +673,7 @@ export default function Navbar({
                 aria-haspopup="true"
                 aria-expanded={openDropdown === "user"}
                 role="menuitem"
-                title="Account"
+                title={isAuthenticated ? currentUser?.fullName || "Account" : "Login"}
               >
                 <NavIcon type="user" />
               </button>
@@ -611,14 +685,19 @@ export default function Navbar({
                   minWidth: "170px",
                   right: 0,
                   left: "auto",
-                  transform: openDropdown === "user"
-                    ? "translateX(0) translateY(0)"
-                    : "translateX(0) translateY(-6px)",
+                  transform:
+                    openDropdown === "user"
+                      ? "translateX(0) translateY(0)"
+                      : "translateX(0) translateY(-6px)",
                 }}
               >
                 {userLinks.map((item, i) =>
                   item.label === "divider" ? (
-                    <div key={i} className="fnb-dropdown-divider" role="separator" />
+                    <div
+                      key={i}
+                      className="fnb-dropdown-divider"
+                      role="separator"
+                    />
                   ) : (
                     <button
                       key={item.label}
@@ -629,7 +708,9 @@ export default function Navbar({
                       <span
                         className="fnb-dropdown-icon"
                         style={{
-                          background: item.danger ? "rgba(255,70,70,0.12)" : "rgba(153,85,255,0.16)",
+                          background: item.danger
+                            ? "rgba(255,70,70,0.12)"
+                            : "rgba(153,85,255,0.16)",
                           color: item.danger ? "#ff7070" : "#aa77ff",
                         }}
                       >
@@ -642,9 +723,12 @@ export default function Navbar({
               </div>
             </li>
 
-            {/* Theme Toggle */}
-            <li className="fnb-nav-item" role="none" style={{ marginLeft: '8px' }}>
-              <div className="fnb-nav-link" style={{ padding: '8px 10px' }}>
+            <li
+              className="fnb-nav-item"
+              role="none"
+              style={{ marginLeft: "8px" }}
+            >
+              <div className="fnb-nav-link" style={{ padding: "8px 10px" }}>
                 <ThemeSwitcherToggle />
               </div>
             </li>
