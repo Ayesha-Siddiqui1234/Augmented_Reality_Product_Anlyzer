@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectProductBySlug } from '../../features/products/productSlice'
-import PublicNavbar from '../../components/PublicNavbar'
+import Navbar from '../../components/Navbar'
 
 const Product3DViewer = () => {
   const { slug } = useParams()
@@ -43,7 +43,7 @@ const Product3DViewer = () => {
   if (!product) {
     return (
       <>
-        <PublicNavbar />
+        <Navbar />
         <div className="min-h-screen flex items-center justify-center" style={{background:'#09070f'}}>
           <div className="text-center">
             <span className="text-6xl mb-4 block">🛋️</span>
@@ -64,7 +64,7 @@ const Product3DViewer = () => {
   if (!product.arSupported || !product.modelUrl) {
     return (
       <>
-        <PublicNavbar />
+        <Navbar />
         <div className="min-h-screen flex items-center justify-center" style={{background:'#09070f'}}>
           <div className="text-center">
             <span className="text-6xl mb-4 block">📦</span>
@@ -84,9 +84,9 @@ const Product3DViewer = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
-      <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
+      <main className="min-h-screen text-purple-400 pt-20" style={{background:'#09070f'}}>
         
         {/* Global Styles */}
         <style>{`
@@ -103,19 +103,6 @@ const Product3DViewer = () => {
             background-color: #9955ff;
           }
         `}</style>
-
-        {/* Breadcrumb */}
-        <div className="border-b border-purple-400/10 py-4 px-6">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-purple-400/60">
-            <button onClick={() => navigate('/')} className="hover:text-purple-400 transition">Home</button>
-            <span>/</span>
-            <button onClick={() => navigate('/products')} className="hover:text-purple-400 transition">Products</button>
-            <span>/</span>
-            <button onClick={() => navigate(`/products/${slug}`)} className="hover:text-purple-400 transition">{product.name}</button>
-            <span>/</span>
-            <span className="text-purple-400">3D View</span>
-          </div>
-        </div>
 
         <div className="max-w-7xl mx-auto px-6 py-8">
           
@@ -263,15 +250,15 @@ const Product3DViewer = () => {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-purple-100/60">Width</span>
-                  <span className="text-purple-300">{product.dimensions.width}</span>
+                  <span className="text-purple-300">{product.dimensions?.width || product.specifications?.width || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-purple-100/60">Height</span>
-                  <span className="text-purple-300">{product.dimensions.height}</span>
+                  <span className="text-purple-300">{product.dimensions?.height || product.specifications?.height || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-purple-100/60">Depth</span>
-                  <span className="text-purple-300">{product.dimensions.depth}</span>
+                  <span className="text-purple-300">{product.dimensions?.depth || product.specifications?.depth || 'N/A'}</span>
                 </div>
               </div>
             </div>

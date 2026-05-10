@@ -180,12 +180,13 @@ const CartPage = () => {
   const handleCheckout = () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
-      // Redirect to login with return path
-      navigate('/login', { state: { from: '/cart' } })
+      // Save current cart state and redirect to login
+      alert('Please login to proceed with checkout')
+      navigate('/login', { state: { from: '/checkout' } })
       return
     }
     
-    // Proceed with checkout
+    // User is authenticated, proceed directly to payment/checkout
     navigate('/checkout')
   }
 
@@ -360,13 +361,13 @@ const CartPage = () => {
                   >
                     {isAuthenticated ? (
                       <>
-                        <span>🔒</span>
-                        <span>Proceed to Checkout</span>
+                        <span>💳</span>
+                        <span>Proceed to Payment</span>
                       </>
                     ) : (
                       <>
                         <span>🔐</span>
-                        <span>Login to Checkout</span>
+                        <span>Proceed to Checkout</span>
                       </>
                     )}
                   </button>

@@ -5,17 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { selectFavoriteProductsByUser } from '../../features/favorites/favoriteSlice'
 import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
 import Navbar from '../../components/Navbar'
-const StarRating = ({ rating }) => {
-  const full = Math.floor(rating)
-  const half = rating % 1 >= 0.5
-  return (
-    <span className="flex gap-0.5 text-purple-400 text-xs">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i}>{i < full ? '★' : i === full && half ? '⯨' : '☆'}</span>
-      ))}
-    </span>
-  )
-}
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate()
@@ -70,11 +59,7 @@ const ProductCard = ({ product }) => {
       {/* Info */}
       <div className="p-4">
         <p className="text-purple-400/50 text-[10px] uppercase tracking-widest mb-1">{product.categoryLabel}</p>
-        <h3 className="text-purple-100 font-semibold text-sm leading-snug mb-2 line-clamp-1">{product.name}</h3>
-        <div className="flex items-center gap-2 mb-3">
-          <StarRating rating={product.rating} />
-          <span className="text-purple-400/40 text-[10px]">({product.reviewCount})</span>
-        </div>
+        <h3 className="text-purple-100 font-semibold text-sm leading-snug mb-3 line-clamp-1">{product.name}</h3>
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-purple-400 font-bold text-base">PKR {product.price.toLocaleString()}</span>
           {product.originalPrice > product.price && (

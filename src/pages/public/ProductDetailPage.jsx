@@ -22,18 +22,6 @@ const useReveal = (threshold = 0.15) => {
   return [ref, visible]
 }
 
-const StarRating = ({ rating }) => {
-  const full = Math.floor(rating)
-  const half = rating % 1 >= 0.5
-  return (
-    <span className="flex gap-0.5 text-purple-400 text-base">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i}>{i < full ? '★' : i === full && half ? '⯨' : '☆'}</span>
-      ))}
-    </span>
-  )
-}
-
 const ProductDetailPage = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -244,12 +232,6 @@ const ProductDetailPage = () => {
             {/* Title */}
             <h1 className="text-4xl md:text-5xl font-extrabold text-purple-400 leading-tight">{product.name}</h1>
 
-            {/* Rating */}
-            <div className="flex items-center gap-3">
-              <StarRating rating={product.rating} />
-              <span className="text-purple-400/60 text-sm">({product.reviewCount} reviews)</span>
-            </div>
-
             {/* Price */}
             <div className="flex items-baseline gap-3">
               <span className="text-4xl font-bold text-purple-400">PKR {product.price.toLocaleString()}</span>
@@ -263,23 +245,6 @@ const ProductDetailPage = () => {
 
             {/* Divider */}
             <div className="border-t border-purple-400/10" />
-
-            {/* Colors */}
-            {product.colors && product.colors.length > 0 && (
-              <div>
-                <p className="text-sm font-semibold text-purple-300 mb-3">Available Colors</p>
-                <div className="flex gap-2">
-                  {product.colors.map((color, idx) => (
-                    <span
-                      key={idx}
-                      className="px-4 py-2 rounded-full border border-purple-400/20 bg-purple-400/5 text-purple-300 text-sm"
-                    >
-                      {color}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Quantity */}
             <div>
@@ -362,7 +327,7 @@ const ProductDetailPage = () => {
         <div className="mb-20">
           {/* Tab Headers */}
           <div className="flex gap-4 border-b border-purple-400/10 mb-8">
-            {['description', 'specifications', 'reviews'].map(tab => (
+            {['description', 'specifications'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -432,42 +397,6 @@ const ProductDetailPage = () => {
                   <div className="flex justify-between py-3 border-b border-purple-400/10">
                     <span className="text-purple-400/60">AR Support</span>
                     <span className="text-purple-300 font-semibold">{product.arSupported ? 'Yes' : 'No'}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'reviews' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-purple-400">Customer Reviews</h3>
-                  <button className="px-6 py-2 rounded-full border border-purple-400/30 bg-purple-400/5 text-purple-400 text-sm font-semibold hover:bg-purple-400/10 transition">
-                    Write a Review
-                  </button>
-                </div>
-                
-                {/* Average Rating */}
-                <div className="flex items-center gap-6 p-6 rounded-xl border border-purple-400/15 bg-purple-400/5">
-                  <div className="text-center">
-                    <div className="text-5xl font-bold text-purple-400 mb-2">{product.rating}</div>
-                    <StarRating rating={product.rating} />
-                    <p className="text-purple-400/60 text-sm mt-2">{product.reviewCount} reviews</p>
-                  </div>
-                </div>
-
-                {/* Sample Review */}
-                <div className="space-y-4">
-                  <div className="p-6 rounded-xl border border-purple-400/15 bg-[#09070f]/40">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="font-semibold text-purple-300">Ahmed Khan</p>
-                        <p className="text-purple-400/60 text-xs">Verified Purchase</p>
-                      </div>
-                      <StarRating rating={5} />
-                    </div>
-                    <p className="text-purple-100/60 text-sm leading-relaxed">
-                      Excellent quality! The AR preview helped me visualize it perfectly in my room. Highly recommended!
-                    </p>
                   </div>
                 </div>
               </div>

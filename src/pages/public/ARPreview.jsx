@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectProductBySlug } from '../../features/products/productSlice'
-import PublicNavbar from '../../components/PublicNavbar'
+import Navbar from '../../components/Navbar'
 
 const ARPreview = () => {
   const { slug } = useParams()
@@ -48,7 +48,7 @@ const ARPreview = () => {
   if (!product) {
     return (
       <>
-        <PublicNavbar />
+        <Navbar />
         <div className="min-h-screen flex items-center justify-center" style={{background:'#09070f'}}>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-purple-400">Product Not Found</h1>
@@ -60,9 +60,9 @@ const ARPreview = () => {
 
   return (
     <>
-      <PublicNavbar />
+      <Navbar />
       
-      <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
+      <main className="min-h-screen text-purple-400 pt-20" style={{background:'#09070f'}}>
         
         {/* Global Styles */}
         <style>{`
@@ -91,28 +91,28 @@ const ARPreview = () => {
           }
         `}</style>
 
-        {/* Header */}
-        <div className="border-b border-purple-400/10 py-4 md:py-6 px-4 md:px-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="w-full md:w-auto">
-              <p className="text-purple-400/60 text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] uppercase mb-1 md:mb-2">Virtual AR Preview</p>
-              <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-purple-400 leading-tight">
-                {product.name} in Your Space
-              </h1>
-              <p className="text-purple-100/60 text-xs md:text-sm mt-1 md:mt-2">
-                🖥️ Desktop Preview Mode - For real AR, open on mobile device
-              </p>
-            </div>
-            <button
-              onClick={() => navigate(`/products/${slug}/3d-view`)}
-              className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-xs md:text-sm hover:bg-purple-400/10 transition-all"
-            >
-              ← Back to 3D View
-            </button>
-          </div>
-        </div>
-
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
+          
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="w-full md:w-auto">
+                <p className="text-purple-400/60 text-[10px] md:text-xs tracking-[0.2em] md:tracking-[0.3em] uppercase mb-1 md:mb-2">Virtual AR Preview</p>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-purple-400 leading-tight">
+                  {product.name} in Your Space
+                </h1>
+                <p className="text-purple-100/60 text-xs md:text-sm mt-1 md:mt-2">
+                  🖥️ Desktop Preview Mode - For real AR, open on mobile device
+                </p>
+              </div>
+              <button
+                onClick={() => navigate(`/products/${slug}/3d-view`)}
+                className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 rounded-xl border border-purple-400/30 bg-purple-400/5 text-purple-400 font-semibold text-xs md:text-sm hover:bg-purple-400/10 transition-all"
+              >
+                ← Back to 3D View
+              </button>
+            </div>
+          </div>
           
           {/* AR Preview Container */}
           <div className="rounded-2xl md:rounded-3xl border border-purple-400/20 bg-[#09070f]/60 backdrop-blur-md overflow-hidden shadow-[0_0_60px_rgba(153,85,255,0.2)]">
