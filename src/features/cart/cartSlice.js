@@ -134,10 +134,13 @@ export const fetchCart = createAsyncThunk(
 )
 
 export const addProductToCart = createAsyncThunk(
+
   'cart/addProductToCart',
   async (productId, thunkAPI) => {
     try {
+      console.log("inside addrducttocart inde cart sice.js")
       const token = thunkAPI.getState().auth.token
+      console.log("token inside cart slice.js",token)
       return await cartService.addToCart(productId, token)
     } catch (error) {
       return thunkAPI.rejectWithValue(
