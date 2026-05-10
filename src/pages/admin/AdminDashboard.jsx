@@ -38,29 +38,7 @@ const stats = [
   },
 ];
 
-const recentOrders = [
-  {
-    id: "#ORD-1001",
-    customer: "Ali Zia",
-    product: "Modern Chair",
-    amount: "Rs. 12,000",
-    status: "Pending",
-  },
-  {
-    id: "#ORD-1002",
-    customer: "Ahmed Khan",
-    product: "Wooden Table",
-    amount: "Rs. 25,000",
-    status: "Delivered",
-  },
-  {
-    id: "#ORD-1003",
-    customer: "Sara Malik",
-    product: "Office Lamp",
-    amount: "Rs. 7,500",
-    status: "Processing",
-  },
-];
+
 
 const navItems = [
   {
@@ -73,11 +51,6 @@ const navItems = [
     label: "Products",
     href: "/admin/products",
     icon: Package,
-  },
-  {
-    label: "Categories",
-    href: "/admin/categories",
-    icon: Tags,
   },
   {
     label: "Orders",
@@ -225,52 +198,123 @@ const AdminDashboard = () => {
 
           {/* Bottom Grid */}
           <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-            {/* Recent Orders */}
-            <div className="rounded-[24px] border border-[#9955ff]/20 bg-white/[0.055] p-5 md:p-6">
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-xl font-bold">Recent Orders</h2>
+           {/* Store Management Flow */}
+<div className="rounded-[24px] border border-[#9955ff]/20 bg-white/[0.055] p-5 md:p-6 shadow-[0_0_35px_rgba(153,85,255,0.08)]">
+  <div className="mb-6 flex items-center justify-between">
+    <div>
+      <h2 className="text-xl font-bold">Store Management Flow</h2>
+      <p className="mt-1 text-sm text-[#aaa2cf]">
+        A quick guide to manage your AR ecommerce workflow smoothly.
+      </p>
+    </div>
 
-                <a
-                  href="/admin/orders"
-                  className="flex items-center gap-1 text-sm text-[#c9b6ff] hover:text-white"
-                >
-                  View All <ArrowRight size={16} />
-                </a>
-              </div>
+    <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#9955ff]/20 text-[#c9b6ff]">
+      <LayoutDashboard size={22} />
+    </div>
+  </div>
 
-              <div className="overflow-x-auto">
-                <div className="min-w-[720px] space-y-3">
-                  <div className="grid grid-cols-5 gap-4 rounded-2xl bg-[#9955ff]/10 px-4 py-3 text-sm font-bold text-[#aaa2cf]">
-                    <span>Order</span>
-                    <span>Customer</span>
-                    <span>Product</span>
-                    <span>Amount</span>
-                    <span>Status</span>
-                  </div>
+  <div className="grid gap-4 md:grid-cols-2">
+    <div className="rounded-[20px] border border-[#9955ff]/20 bg-[#0f0d1c]/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#9955ff]/40 hover:bg-[#9955ff]/10">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#9955ff]/20 text-[#c9b6ff]">
+          <Package size={22} />
+        </div>
 
-                  {recentOrders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="grid grid-cols-5 gap-4 rounded-2xl bg-white/[0.045] px-4 py-4 text-sm text-[#d7d2eb]"
-                    >
-                      <span>{order.id}</span>
-                      <span>{order.customer}</span>
-                      <span>{order.product}</span>
-                      <span>{order.amount}</span>
-                      <span>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${getStatusClass(
-                            order.status
-                          )}`}
-                        >
-                          {order.status}
-                        </span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+        <div>
+          <h3 className="font-bold text-white">Product Setup</h3>
+          <p className="text-xs text-[#aaa2cf]">Step 01</p>
+        </div>
+      </div>
+
+      <p className="text-sm leading-6 text-[#c9c3df]">
+        Add product details, upload image links, set stock quantity, and attach
+        3D/GLB model URLs for AR preview.
+      </p>
+
+      <a
+        href="/admin/products/add"
+        className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#c9b6ff] hover:text-white"
+      >
+        Add Product <ArrowRight size={15} />
+      </a>
+    </div>
+
+    <div className="rounded-[20px] border border-[#9955ff]/20 bg-[#0f0d1c]/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#9955ff]/40 hover:bg-[#9955ff]/10">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-400/15 text-blue-300">
+          <ShoppingCart size={22} />
+        </div>
+
+        <div>
+          <h3 className="font-bold text-white">Order Handling</h3>
+          <p className="text-xs text-[#aaa2cf]">Step 02</p>
+        </div>
+      </div>
+
+      <p className="text-sm leading-6 text-[#c9c3df]">
+        Review customer orders, assign dispatch companies, and update order
+        progress from placed to delivered.
+      </p>
+
+      <a
+        href="/admin/orders"
+        className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#c9b6ff] hover:text-white"
+      >
+        Manage Orders <ArrowRight size={15} />
+      </a>
+    </div>
+
+    <div className="rounded-[20px] border border-[#9955ff]/20 bg-[#0f0d1c]/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#9955ff]/40 hover:bg-[#9955ff]/10">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-400/15 text-emerald-300">
+          <Users size={22} />
+        </div>
+
+        <div>
+          <h3 className="font-bold text-white">User Control</h3>
+          <p className="text-xs text-[#aaa2cf]">Step 03</p>
+        </div>
+      </div>
+
+      <p className="text-sm leading-6 text-[#c9c3df]">
+        View registered users, monitor their activity, and block or unblock
+        accounts when needed.
+      </p>
+
+      <a
+        href="/admin/users"
+        className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#c9b6ff] hover:text-white"
+      >
+        View Users <ArrowRight size={15} />
+      </a>
+    </div>
+
+    <div className="rounded-[20px] border border-[#9955ff]/20 bg-[#0f0d1c]/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#9955ff]/40 hover:bg-[#9955ff]/10">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-purple-400/15 text-purple-300">
+          <Box size={22} />
+        </div>
+
+        <div>
+          <h3 className="font-bold text-white">AR Experience</h3>
+          <p className="text-xs text-[#aaa2cf]">Step 04</p>
+        </div>
+      </div>
+
+      <p className="text-sm leading-6 text-[#c9c3df]">
+        Keep products AR-ready by adding valid 3D model links and ensuring
+        product images are clean and realistic.
+      </p>
+
+      <a
+        href="/admin/products"
+        className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#c9b6ff] hover:text-white"
+      >
+        Check Products <ArrowRight size={15} />
+      </a>
+    </div>
+  </div>
+</div>
 
             {/* Quick Actions */}
             <div className="rounded-[24px] border border-[#9955ff]/20 bg-white/[0.055] p-5 md:p-6">

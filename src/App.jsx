@@ -1,6 +1,11 @@
 // src/App.jsx
 
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { fetchProducts } from './features/products/productSlice'
+import { fetchFavorites } from './features/favorites/favoriteSlice'
+import { selectIsAuthenticated } from './features/auth/authSlice'
 import CheckoutPage from './pages/public/payment/CheckoutPage'
 import PaymentCancelPage from './pages/public/payment/PaymentCancel'
 import PaymentSuccessPage from './pages/public/payment/PaymentSuccess'
@@ -20,8 +25,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AddProduct from './pages/admin/AddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminProductDetails from './pages/admin/AdminProductDetails'
-import AdminCategories from './pages/admin/AdminCategories'
-import AdminCategoryForm from "./pages/admin/AdminCategoryForm";
+// import AdminCategories from './pages/admin/AdminCategories'
+// import AdminCategoryForm from "./pages/admin/AdminCategoryForm";
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminOrders from "./pages/admin/AdminOrders";
 import AboutPage from './pages/public/About'
@@ -36,6 +41,21 @@ const Placeholder = ({ title, owner }) => (
 
 
 function App() {
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+
+  // Fetch products on app load
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [dispatch])
+
+  // Fetch favorites if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchFavorites())
+    }
+  }, [dispatch, isAuthenticated])
+
   return (
     <BrowserRouter>
       <Routes>
@@ -54,10 +74,10 @@ function App() {
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add" element={<AddProduct />} />
         <Route path="/admin/products/:id" element={<AdminProductDetails />} />
-        <Route path="/admin/categories" element={<AdminCategories />} />
+        {/* <Route path="/admin/categories" element={<AdminCategories />} /> */}
         <Route path="/admin/products/edit/:id" element={<AdminProductDetails />} />
-        <Route path="/admin/categories/add" element={<AdminCategoryForm />} />
-        <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} />
+        {/* <Route path="/admin/categories/add" element={<AdminCategoryForm />} /> */}
+        {/* <Route path="/admin/categories/edit/:id" element={<AdminCategoryForm />} /> */}
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/checkout" element={<CheckoutPage />} />

@@ -1,80 +1,106 @@
-// src/pages/public/payment/PaymentSuccessPage.jsx
+// src/pages/public/payment/PaymentSuccess.jsx
 
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-
-import Navbar from '../../../components/Navbar'
-
-import {
-  clearUserCart,
-} from '../../../features/cart/cartSlice'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { CheckCircle } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { clearUserCart } from "../../../features/cart/cartSlice";
 
 const PaymentSuccessPage = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const latestOrder = JSON.parse(localStorage.getItem('latestOrder'))
+  const [latestOrder, setLatestOrder] = useState(null);
+
+  useEffect(() => {
+    const storedOrder = localStorage.getItem("latestOrder");
+
+    if (storedOrder) {
+      setLatestOrder(JSON.parse(storedOrder));
+    }
+  }, []);
 
   const handleContinue = async () => {
-    await dispatch(clearUserCart())
+    try {
+      await dispatch(clearUserCart());
+    } catch (error) {
+      console.log(error);
+    }
 
-    localStorage.removeItem('checkoutData')
-    localStorage.removeItem('latestOrder')
+    localStorage.removeItem("checkoutData");
+    localStorage.removeItem("latestOrder");
+    localStorage.removeItem("simulationOrderId");
 
-    navigate('/products')
-  }
+    navigate("/products");
+  };
 
   return (
-    <>
-      <Navbar />
-
-      <main className="min-h-screen bg-[#09070f] text-purple-400 flex items-center justify-center px-4 py-28">
-        <div className="max-w-xl w-full rounded-2xl border border-emerald-400/30 bg-[#120d1d] p-8 text-center">
-          <div className="w-20 h-20 rounded-full bg-emerald-400/20 text-emerald-300 flex items-center justify-center mx-auto text-4xl mb-6">
-            ✓
-          </div>
-
-          <h1 className="text-3xl font-extrabold mb-3">
-            Payment Successful
-          </h1>
-
-          <p className="text-purple-100/70 mb-6">
-            Your Stripe test payment was completed successfully.
-          </p>
-
-          {latestOrder && (
-            <div className="text-left rounded-xl bg-black/30 border border-purple-400/20 p-4 mb-6 space-y-2">
-              <div className="flex justify-between gap-4">
-                <span>Order ID</span>
-                <span className="font-bold">{latestOrder.id}</span>
-              </div>
-
-              <div className="flex justify-between gap-4">
-                <span>Payment Status</span>
-                <span className="text-emerald-300 font-bold">
-                  {latestOrder.paymentStatus}
-                </span>
-              </div>
-
-              <div className="flex justify-between gap-4">
-                <span>Total</span>
-                <span className="font-bold">
-                  PKR {Number(latestOrder.total || 0).toLocaleString()}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={handleContinue}
-            className="w-full py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
-          >
-            Continue Shopping
-          </button>
+    <main className="min-h-screen bg-[#090812] text-white flex items-center justify-center px-4">
+      <div className="w-full max-w-xl rounded-[28px] border border-emerald-400/20 bg-white/[0.055] p-8 text-center shadow-[0_0_45px_rgba(16,185,129,0.16)]">
+        <div className="mx-auto mb-5 grid h-20 w-20 place-items-center rounded-full bg-emerald-400/15 text-emerald-300">
+          <CheckCircle size={48} />
         </div>
-      </main>
-    </>
-  )
-}
 
-export default PaymentSuccessPage
+        <h1 className="text-3xl font-bold text-emerald-300">
+          Payment Successful
+        </h1>
+
+        <p className="mt-3 text-sm leading-6 text-[#c9c3df]">
+          Your payment has been confirmed and your order has been placed
+          successfully.
+        </p>
+
+        {latestOrder && (
+          <div className="mt-6 rounded-2xl border border-white/10 bg-[#0f0d1c]/70 p-5 text-left">
+            <p className="mb-3 text-sm font-bold text-[#c9b6ff]">
+              Order Summary
+            </p>
+
+            <div className="space-y-2 text-sm text-[#c9c3df]">
+              <p>
+                <span className="text-[#aaa2cf]">Order ID:</span>{" "}
+                {latestOrder.id}
+              </p>
+
+              <p>
+                <span className="text-[#aaa2cf]">Payment Status:</span>{" "}
+                {latestOrder.paymentStatus}
+              </p>
+
+              <p>
+                <span className="text-[#aaa2cf]">Order Status:</span>{" "}
+                {latestOrder.orderStatus}
+              </p>
+
+              <p>
+                <span className="text-[#aaa2cf]">Transaction ID:</span>{" "}
+                {latestOrder.transactionId || "N/A"}
+              </p>
+
+              <p>
+                <span className="text-[#aaa2cf]">Total:</span> Rs.{" "}
+                {Number(latestOrder.total || 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={handleContinue}
+          className="mt-7 w-full rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-bold text-white transition hover:bg-emerald-600"
+        >
+          Continue Shopping
+        </button>
+
+        <button
+          onClick={() => navigate("/")}
+          className="mt-3 w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm font-bold text-white transition hover:bg-white/10"
+        >
+          Go to Home
+        </button>
+      </div>
+    </main>
+  );
+};
+
+export default PaymentSuccessPage;
