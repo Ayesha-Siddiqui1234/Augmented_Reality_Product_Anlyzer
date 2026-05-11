@@ -57,13 +57,23 @@ const AdminLogin = () => {
           }
         )
 
-        if (response.data.success) {
-          localStorage.setItem('token', response.data.accessToken)
-          localStorage.setItem('user', JSON.stringify(response.data.user))
-          
-          toast.success('Admin login successful!')
-          setTimeout(() => navigate('/admin'), 500)
-        }
+       if (response.data.success) {
+  const loggedInUser = response.data.user
+
+  if (loggedInUser?.role !== 'admin') {
+    toast.error('Only admin accounts can access this portal.')
+    return
+  }
+
+  localStorage.setItem('token', response.data.accessToken)
+  localStorage.setItem('user', JSON.stringify(loggedInUser))
+
+  toast.success('Admin login successful!')
+
+  setTimeout(() => {
+    window.location.replace('/admin')
+  }, 500)
+}
       } catch (error) {
         console.error('Admin login error:', error)
         toast.error(
@@ -231,17 +241,7 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            {/* Helper Text */}
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-400/20 rounded-lg">
-                <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-xs text-purple-300">
-                  <span className="font-semibold">admin@gmail.com</span> / <span className="font-semibold">admin12345</span>
-                </p>
-              </div>
-            </div>
+          
 
             {/* Back to Home */}
             <div className="mt-8 text-center">
