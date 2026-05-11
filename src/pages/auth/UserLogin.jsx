@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { login, selectAuthLoading, selectAuthError } from '../../features/auth/authSlice'
+import toast, { Toaster } from 'react-hot-toast'
 
 
 const UserLogin = () => {
@@ -58,7 +59,7 @@ const UserLogin = () => {
           rememberMe
         })).unwrap()
         
-        alert('Login successful!')
+        toast.success('Login successful!')
         navigate(from) // Redirect to original destination or cart
       } catch (error) {
         setErrors({ submit: error || 'Login failed. Please check your credentials.' })
@@ -70,6 +71,7 @@ const UserLogin = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       {/* <PublicNavbar />
        */}
       <main className="min-h-screen flex items-center justify-center px-6 py-12" style={{background:'#09070f'}}>
@@ -175,7 +177,7 @@ const UserLogin = () => {
                 )}
               </div>
 
-              {/* Remember Me & Forgot Password */}
+              {/* Remember Me */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -186,13 +188,6 @@ const UserLogin = () => {
                   />
                   <span className="text-purple-300 text-sm">Remember me</span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() => alert('Password reset feature coming soon!')}
-                  className="text-purple-400 text-sm font-semibold hover:text-purple-300 transition"
-                >
-                  Forgot Password?
-                </button>
               </div>
 
               {/* Submit Button */}

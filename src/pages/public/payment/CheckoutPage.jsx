@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import toast, { Toaster } from 'react-hot-toast'
 
 const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
 
@@ -79,7 +80,7 @@ const CheckoutPage = () => {
     !formData.address ||
     !formData.city
   ) {
-    alert('Please fill all delivery details.')
+    toast.error('Please fill all delivery details.')
     return
   }
 
@@ -87,7 +88,7 @@ const CheckoutPage = () => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      alert('Please login first.')
+      toast.error('Please login first.')
       navigate('/login', { state: { from: '/checkout' } })
       return
     }
@@ -124,7 +125,7 @@ const CheckoutPage = () => {
 
     navigate('/stripe-simulation')
   } catch (error) {
-    alert(
+    toast.error(
       error.response?.data?.message ||
         error.message ||
         'Failed to create order.'
@@ -172,6 +173,7 @@ const CheckoutPage = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
 
       <main className="min-h-screen bg-[#09070f] text-purple-400 px-4 py-28">

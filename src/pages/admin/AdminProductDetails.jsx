@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
 import {
   ArrowLeft,
   Box,
@@ -79,7 +80,7 @@ const AdminProductDetails = () => {
 
     console.log("Updated Product:", formData);
 
-    alert("Edit save functionality will connect to backend later.");
+    toast.info("Edit save functionality will connect to backend later.");
   };
 
   const inputClass =
@@ -88,7 +89,9 @@ const AdminProductDetails = () => {
   const labelClass = "mb-2 block text-sm font-medium text-[#c9c3df]";
 
   return (
-    <div className="min-h-screen bg-[#090812] text-white">
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="min-h-screen bg-[#090812] text-white">
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(153,85,255,0.28),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(153,85,255,0.18),transparent_35%)] px-5 py-6 md:px-8 lg:px-10">
         {/* Header */}
         <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
@@ -533,6 +536,7 @@ const AdminProductDetails = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

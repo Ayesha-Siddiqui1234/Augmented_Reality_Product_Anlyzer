@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import toast, { Toaster } from 'react-hot-toast'
 
 const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
 
@@ -35,12 +36,12 @@ const StripeSimulationPage = () => {
       !cardData.cvc ||
       !cardData.name
     ) {
-      alert('Please fill all card details.')
+      toast.error('Please fill all card details.')
       return
     }
 
     if (!simulationOrderId) {
-      alert('No backend order found. Please checkout again.')
+      toast.error('No backend order found. Please checkout again.')
       navigate('/checkout')
       return
     }
@@ -51,7 +52,7 @@ const StripeSimulationPage = () => {
       const token = localStorage.getItem('token')
 
       if (!token) {
-        alert('Please login first.')
+        toast.error('Please login first.')
         navigate('/login')
         return
       }
@@ -91,7 +92,7 @@ const StripeSimulationPage = () => {
         return
       }
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           error.message ||
           'Payment failed.'
@@ -141,7 +142,9 @@ const StripeSimulationPage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f9fc] flex items-center justify-center px-4 py-10">
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <main className="min-h-screen bg-[#f6f9fc] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="bg-[#635bff] text-white px-6 py-5">
           <h1 className="text-2xl font-bold">Stripe Test Checkout</h1>
@@ -224,6 +227,7 @@ const StripeSimulationPage = () => {
         </div>
       </div>
     </main>
+    </>
   )
 }
 

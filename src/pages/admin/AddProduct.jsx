@@ -8,6 +8,7 @@ import {
   selectAdminProductsLoading,
   selectAdminProductsError,
 } from "../../features/admin/adminProductSlice";
+import toast, { Toaster } from 'react-hot-toast';
 
 import {
   ArrowLeft,
@@ -79,15 +80,17 @@ const AddProduct = () => {
     const result = await dispatch(createProduct(productPayload));
 
     if (createProduct.fulfilled.match(result)) {
-      alert("Product added successfully!");
+      toast.success("Product added successfully!");
       navigate("/admin/products");
     } else {
-      alert(result.payload || "Failed to add product");
+      toast.error(result.payload || "Failed to add product");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#090812] text-white">
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="min-h-screen bg-[#090812] text-white">
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(153,85,255,0.28),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(153,85,255,0.18),transparent_35%)] px-5 py-6 md:px-8 lg:px-10">
         {/* Header */}
         <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
@@ -464,6 +467,7 @@ const AddProduct = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

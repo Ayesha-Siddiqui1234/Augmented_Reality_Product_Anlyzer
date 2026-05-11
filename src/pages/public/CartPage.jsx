@@ -442,6 +442,7 @@ import {
   selectCurrentUser,
 } from '../../features/auth/authSlice'
 import Navbar from '../../components/Navbar'
+import toast, { Toaster } from 'react-hot-toast'
 
 const CartItemWith3D = ({ item, onIncrease, onDecrease, onRemove }) => {
   const navigate = useNavigate()
@@ -540,7 +541,7 @@ const CartItemWith3D = ({ item, onIncrease, onDecrease, onRemove }) => {
             <button
               onClick={() => {
                 if (item.quantity >= item.stock) {
-                  alert(`Maximum stock limit! Only ${item.stock} items available.`)
+                  toast.error(`Maximum stock limit! Only ${item.stock} items available.`)
                 } else {
                   onIncrease(productId)
                 }
@@ -630,7 +631,7 @@ const CartPage = () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
       // Save current cart state and redirect to login
-      alert('Please login to proceed with checkout')
+      toast.error('Please login to proceed with checkout')
       navigate('/login', { state: { from: '/checkout' } })
       return
     }
@@ -641,6 +642,7 @@ const CartPage = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
 
       <main className="min-h-screen text-purple-400" style={{ background: '#09070f' }}>

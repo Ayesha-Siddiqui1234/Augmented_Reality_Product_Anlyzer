@@ -8,6 +8,7 @@ import {
   selectAuthLoading,
   selectAuthError,
 } from '../../features/auth/authSlice'
+import toast, { Toaster } from 'react-hot-toast'
 
 const getErrorMessage = (error) => {
   if (!error) return ''
@@ -100,7 +101,7 @@ const UserSignup = () => {
 
       await dispatch(signup(signupData)).unwrap()
 
-      alert('Account created successfully! Please login.')
+      toast.success('Account created successfully! Please login.')
       navigate('/login')
     } catch (error) {
       setErrors({
@@ -113,6 +114,7 @@ const UserSignup = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <main
         className="min-h-screen flex items-center justify-center px-6 py-12"
         style={{ background: '#09070f' }}

@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectProductBySlug } from '../../features/products/productSlice'
 import Navbar from '../../components/Navbar'
+import toast, { Toaster } from 'react-hot-toast'
 
 const ARPreview = () => {
   const { slug } = useParams()
@@ -60,6 +61,7 @@ const ARPreview = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       
       <main className="min-h-screen text-purple-400 pt-20" style={{background:'#09070f'}}>
@@ -268,7 +270,7 @@ const ARPreview = () => {
                     onClick={() => {
                       const url = window.location.href.replace('/ar-preview', '/3d-view')
                       navigator.clipboard.writeText(url)
-                      alert('Link copied! Open it on your mobile device.')
+                      toast.success('Link copied! Open it on your mobile device.')
                     }}
                     className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 rounded-xl bg-purple-400 text-black font-bold text-xs md:text-sm hover:bg-purple-300 transition-all whitespace-nowrap"
                   >

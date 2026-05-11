@@ -9,6 +9,7 @@ import {
   selectCurrentUser,
   selectIsAuthenticated,
 } from "../features/auth/authSlice";
+import toast, { Toaster } from 'react-hot-toast';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
@@ -484,6 +485,7 @@ export default function Navbar({ activePage = "home" }) {
   const handleLogout = async () => {
     setOpenDropdown(null);
     await dispatch(logoutUser());
+    toast.success('Logged out successfully!');
     navigate("/login");
   };
 
@@ -517,6 +519,7 @@ export default function Navbar({ activePage = "home" }) {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <style>{styles}</style>
 
       <nav

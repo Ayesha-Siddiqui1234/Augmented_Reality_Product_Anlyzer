@@ -7,6 +7,7 @@ import { selectProductBySlug, selectRelatedProducts } from '../../features/produ
 import { toggleFavorite, selectIsFavorite } from '../../features/favorites/favoriteSlice'
 import { addProductToCart } from '../../features/cart/cartSlice'
 import Navbar from '../../components/Navbar'
+import toast, { Toaster } from 'react-hot-toast'
 /* ─── hook: intersection observer for reveal animations ─── */
 const useReveal = (threshold = 0.15) => {
   const ref = useRef(null)
@@ -68,17 +69,30 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     // Check if quantity exceeds stock
     if (quantity > product.stock) {
-      alert(`Sorry! Only ${product.stock} items available in stock.`)
+      toast.error(`Sorry! Only ${product.stock} items available in stock.`)
       setQuantity(product.stock)
       return
     }
     
     dispatch(addProductToCart(product.id))
-    // Show success message and navigate to cart
-    const goToCart = window.confirm(`Added ${quantity} x ${product.name} to cart!\n\nGo to cart now?`)
-    if (goToCart) {
-      navigate('/cart')
-    }
+    // Show success message with toast and action button
+    toast.success(
+      (t) => (
+        <div className="flex items-center gap-3">
+          <span>Added {quantity} x {product.name} to cart!</span>
+          <button
+            onClick={() => {
+              toast.dismiss(t.id)
+              navigate('/cart')
+            }}
+            className="px-3 py-1 rounded-lg bg-purple-500 text-white text-sm font-semibold hover:bg-purple-600 transition"
+          >
+            View Cart
+          </button>
+        </div>
+      ),
+      { duration: 4000 }
+    )
   }
 
   const handleToggleFavorite = () => {
@@ -90,6 +104,7 @@ const ProductDetailPage = () => {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       
       <main className="min-h-screen text-purple-400" style={{background:'#09070f'}}>
@@ -262,7 +277,7 @@ const ProductDetailPage = () => {
                 <button
                   onClick={() => {
                     if (quantity >= product.stock) {
-                      alert(`Maximum stock limit reached! Only ${product.stock} items available.`)
+                      toast.error(`Maximum stock limit reached! Only ${product.stock} items available.`)
                     } else {
                       setQuantity(Math.min(product.stock, quantity + 1))
                     }
