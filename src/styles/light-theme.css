@@ -32,11 +32,7 @@
   color: #7c3aed !important;
 }
 
-.light-theme .bg-\[#09070f\]\/60,
-.light-theme .bg-\[#09070f\]\/40,
-.light-theme .bg-white\/5 {
-  background: rgba(255, 255, 255, 0.95) !important;
-}
+/* Removed problematic escaped selectors - use Tailwind classes directly in components */
 
 .light-theme .border-purple-400\/15,
 .light-theme .border-purple-400\/10,

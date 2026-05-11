@@ -85,15 +85,7 @@ body.light-theme .text-purple-400\/60 {
   color: #7c3aed !important;
 }
 
-/* Common dark cards become light cards */
-body.light-theme .bg-\[\#09070f\],
-body.light-theme .bg-\[\#09070f\]\/40,
-body.light-theme .bg-\[\#09070f\]\/60,
-body.light-theme .bg-\[\#120d1d\],
-body.light-theme .bg-\[\#120d1d\]\/80,
-body.light-theme .bg-white\/5 {
-  background: rgba(255, 255, 255, 0.92) !important;
-}
+/* Common dark cards become light cards - removed problematic escaped selectors */
 
 /* Borders */
 body.light-theme .border-purple-400\/10,
