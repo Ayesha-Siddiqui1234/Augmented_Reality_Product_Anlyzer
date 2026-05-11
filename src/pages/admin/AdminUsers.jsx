@@ -376,6 +376,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../config/api";
 
 import {
   ArrowLeft,
@@ -393,7 +394,7 @@ import {
   UserX,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api/admin/users";
+const API_URL = API_ENDPOINTS.ADMIN_USERS;
 
 const defaultAvatar =
   "https://ui-avatars.com/api/?background=9955ff&color=fff&name=User";

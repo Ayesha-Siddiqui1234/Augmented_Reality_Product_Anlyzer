@@ -98,8 +98,9 @@
 // src/features/auth/authService.js
 
 import axios from 'axios'
+import { API_ENDPOINTS } from '../../config/api'
 
-const API_URL = 'http://localhost:5000/api/auth'
+const API_URL = API_ENDPOINTS.AUTH
 
 const signup = async (userData) => {
   console.log("inside auth servce.js",userData)

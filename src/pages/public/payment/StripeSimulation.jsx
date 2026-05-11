@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import { API_ENDPOINTS } from '../../../config/api'
 
-const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
+const PAYMENT_API_URL = API_ENDPOINTS.PAYMENTS
 
 const StripeSimulationPage = () => {
   const navigate = useNavigate()

@@ -375,6 +375,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../config/api";
 
 import {
   Package,
@@ -436,13 +437,13 @@ const AdminDashboard = () => {
 
         const [productsResponse, ordersResponse, usersResponse] =
           await Promise.all([
-            axios.get("http://localhost:5000/api/admin/products", {
+            axios.get(API_ENDPOINTS.ADMIN_PRODUCTS, {
               headers: getAuthHeaders(),
             }),
-            axios.get("http://localhost:5000/api/admin/orders", {
+            axios.get(API_ENDPOINTS.ADMIN_ORDERS, {
               headers: getAuthHeaders(),
             }),
-            axios.get("http://localhost:5000/api/admin/users", {
+            axios.get(API_ENDPOINTS.ADMIN_USERS, {
               headers: getAuthHeaders(),
             }),
           ]);

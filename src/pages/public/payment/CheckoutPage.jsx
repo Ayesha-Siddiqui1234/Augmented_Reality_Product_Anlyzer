@@ -7,8 +7,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import { API_ENDPOINTS } from '../../../config/api'
 
-const PAYMENT_API_URL = 'http://localhost:5000/api/payments'
+const PAYMENT_API_URL = API_ENDPOINTS.PAYMENTS
 
 import Navbar from '../../../components/Navbar'
 
@@ -95,21 +96,39 @@ const CheckoutPage = () => {
       return
     }
 
-    // If COD is selected, navigate directly to COD success page
+    // If COD is selected, create COD order in backend
     if (paymentMethod === 'cod') {
-      // Save order data for COD
+      const response = await axios.post(
+        `${PAYMENT_API_URL}/cod/create-order`,
+        {
+          shippingAddress: formData,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const order = response.data.order
+
+      // Save order data for COD success page
       localStorage.setItem(
         'codOrderData',
         JSON.stringify({
+          orderId: order._id,
           customer: formData,
-          items: cartItems,
-          subtotal: cartTotal,
-          tax: tax,
-          total: grandTotal,
+          items: order.items,
+          subtotal: order.subtotal,
+          tax: order.tax,
+          total: order.total,
           paymentMethod: 'Cash on Delivery',
-          createdAt: new Date().toISOString(),
+          orderStatus: order.orderStatus,
+          createdAt: order.createdAt,
         })
       )
+      
+      toast.success('Order placed successfully!')
       navigate('/cod-success')
       return
     }

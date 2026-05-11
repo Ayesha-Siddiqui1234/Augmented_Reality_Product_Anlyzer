@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import { API_ENDPOINTS } from '../../config/api'
 
 const AdminLogin = () => {
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ const AdminLogin = () => {
       
       try {
         const response = await axios.post(
-          'http://localhost:5000/api/auth/admin/login',
+          API_ENDPOINTS.ADMIN_LOGIN,
           {
             email: formData.email,
             password: formData.password

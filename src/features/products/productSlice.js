@@ -124,8 +124,9 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { API_ENDPOINTS } from '../../config/api'
 
-const API_URL = 'http://localhost:5000/api/products'
+const API_URL = API_ENDPOINTS.PRODUCTS
 
 const makeSlug = (text = '') =>
   text

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../config/api";
 
 import {
   ArrowLeft,
@@ -18,7 +19,7 @@ import {
   CreditCard,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api/admin/orders";
+const API_URL = API_ENDPOINTS.ADMIN_ORDERS;
 
 const statusOptions = [
   "pending",
@@ -562,15 +563,26 @@ const AdminOrders = () => {
                           ))}
                         </div>
 
-                        <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-                          <p className="flex items-center gap-2 text-sm text-[#aaa2cf]">
-                            <CreditCard size={15} />
-                            Total Amount
-                          </p>
-
-                          <p className="text-xl font-bold text-white">
-                            Rs. {Number(order.totalAmount || 0).toLocaleString()}
-                          </p>
+                        <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+                          <div className="flex items-center justify-between">
+                            <p className="flex items-center gap-2 text-sm text-[#aaa2cf]">
+                              <CreditCard size={15} />
+                              Payment Method
+                            </p>
+                            <p className="text-sm font-semibold text-white">
+                              {order.raw.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
+                            </p>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <p className="flex items-center gap-2 text-sm text-[#aaa2cf]">
+                              <CreditCard size={15} />
+                              Total Amount
+                            </p>
+                            <p className="text-xl font-bold text-white">
+                              Rs. {Number(order.totalAmount || 0).toLocaleString()}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>

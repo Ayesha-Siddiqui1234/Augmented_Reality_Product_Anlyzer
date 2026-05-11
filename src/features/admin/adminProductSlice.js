@@ -2,9 +2,10 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../config/api";
 
-const API_URL = "http://localhost:5000/api/admin/products";
-const PUBLIC_PRODUCTS_API_URL = "http://localhost:5000/api/products";
+const API_URL = API_ENDPOINTS.ADMIN_PRODUCTS;
+const PUBLIC_PRODUCTS_API_URL = API_ENDPOINTS.PRODUCTS;
 
 const getToken = () => localStorage.getItem("token");
 
