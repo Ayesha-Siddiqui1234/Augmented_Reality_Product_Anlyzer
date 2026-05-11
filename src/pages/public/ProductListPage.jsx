@@ -1,6 +1,6 @@
 // src/pages/public/ProductListPage.jsx
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -129,12 +129,46 @@ const ProductListPage = () => {
   const loading = useSelector(selectProductsLoading)
   const error = useSelector(selectProductsError)
 
+  // Local state for filters
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategoryLocal] = useState('all')
+  const [priceRange, setPriceRange] = useState('all')
+  const [sortBy, setSortByLocal] = useState('featured')
+
   // Fetch products on mount if not already loaded
   useEffect(() => {
     if (products.length === 0 && !loading) {
       dispatch(fetchProducts())
     }
   }, [dispatch, products.length, loading])
+
+  // Handle search
+  const handleSearch = (value) => {
+    setSearchTerm(value)
+    dispatch(setSearchQuery(value))
+  }
+
+  // Handle category filter
+  const handleCategoryChange = (category) => {
+    setSelectedCategoryLocal(category)
+    dispatch(setSelectedCategory(category === 'all' ? '' : category))
+  }
+
+  // Handle sort
+  const handleSortChange = (sort) => {
+    setSortByLocal(sort)
+    dispatch(setSortBy(sort))
+  }
+
+  // Filter by price range
+  const filteredByPrice = products.filter(product => {
+    if (priceRange === 'all') return true
+    if (priceRange === 'under-10k') return product.price < 10000
+    if (priceRange === '10k-20k') return product.price >= 10000 && product.price < 20000
+    if (priceRange === '20k-50k') return product.price >= 20000 && product.price < 50000
+    if (priceRange === 'above-50k') return product.price >= 50000
+    return true
+  })
 
   // Show loading state
   if (loading) {
@@ -202,9 +236,9 @@ const ProductListPage = () => {
             </p>
             <h1 className="text-4xl md:text-5xl font-extrabold text-purple-400 leading-tight flex items-center gap-4">
               All Products
-              {products.length > 0 && (
+              {filteredByPrice.length > 0 && (
                 <span className="inline-flex items-center justify-center px-4 h-12 rounded-full bg-purple-400 text-black text-lg font-bold shadow-[0_0_20px_rgba(153,85,255,0.4)]">
-                  {products.length}
+                  {filteredByPrice.length}
                 </span>
               )}
             </h1>
@@ -213,8 +247,85 @@ const ProductListPage = () => {
             </p>
           </div>
 
+          {/* Search and Filters */}
+          <div className="mb-8 space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-purple-400/20 text-purple-100 placeholder-purple-400/40 outline-none focus:border-purple-400/50 transition-all"
+              />
+              <span className="absolute right-6 top-1/2 -translate-y-1/2 text-purple-400/40 text-xl">
+                🔍
+              </span>
+            </div>
+
+            {/* Filters Row */}
+            <div className="flex flex-wrap gap-4">
+              {/* Category Filter */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="px-4 py-3 rounded-xl bg-white/5 border border-purple-400/20 text-purple-100 outline-none focus:border-purple-400/50 transition-all cursor-pointer"
+              >
+                <option value="all">All Categories</option>
+                <option value="chairs">Chairs</option>
+                <option value="tables">Tables</option>
+                <option value="sofas">Sofas</option>
+                <option value="desks">Desks</option>
+                <option value="lighting">Lighting</option>
+              </select>
+
+              {/* Price Range Filter */}
+              <select
+                value={priceRange}
+                onChange={(e) => setPriceRange(e.target.value)}
+                className="px-4 py-3 rounded-xl bg-white/5 border border-purple-400/20 text-purple-100 outline-none focus:border-purple-400/50 transition-all cursor-pointer"
+              >
+                <option value="all">All Prices</option>
+                <option value="under-10k">Under PKR 10,000</option>
+                <option value="10k-20k">PKR 10,000 - 20,000</option>
+                <option value="20k-50k">PKR 20,000 - 50,000</option>
+                <option value="above-50k">Above PKR 50,000</option>
+              </select>
+
+              {/* Sort By */}
+              <select
+                value={sortBy}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="px-4 py-3 rounded-xl bg-white/5 border border-purple-400/20 text-purple-100 outline-none focus:border-purple-400/50 transition-all cursor-pointer"
+              >
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+              </select>
+
+              {/* Clear Filters */}
+              {(searchTerm || selectedCategory !== 'all' || priceRange !== 'all' || sortBy !== 'featured') && (
+                <button
+                  onClick={() => {
+                    setSearchTerm('')
+                    setSelectedCategoryLocal('all')
+                    setPriceRange('all')
+                    setSortByLocal('featured')
+                    dispatch(setSearchQuery(''))
+                    dispatch(setSelectedCategory(''))
+                    dispatch(setSortBy('featured'))
+                  }}
+                  className="px-4 py-3 rounded-xl bg-purple-400/10 border border-purple-400/30 text-purple-400 hover:bg-purple-400/20 transition-all font-medium"
+                >
+                  Clear Filters ✕
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Products Grid */}
-          {products.length === 0 ? (
+          {filteredByPrice.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-6 text-center">
               <div className="w-24 h-24 rounded-full bg-purple-400/10 border-2 border-purple-400/30 flex items-center justify-center text-5xl">
                 📦
@@ -226,15 +337,23 @@ const ProductListPage = () => {
                 </p>
               </div>
               <button
-                onClick={() => navigate('/')}
+                onClick={() => {
+                  setSearchTerm('')
+                  setSelectedCategoryLocal('all')
+                  setPriceRange('all')
+                  setSortByLocal('featured')
+                  dispatch(setSearchQuery(''))
+                  dispatch(setSelectedCategory(''))
+                  dispatch(setSortBy('featured'))
+                }}
                 className="mt-4 px-8 py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition-all shadow-[0_0_30px_rgba(153,85,255,0.3)]"
               >
-                Go Home
+                Clear All Filters
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map(product => (
+              {filteredByPrice.map(product => (
                 <ProductCard key={product._id || product.id} product={product} />
               ))}
             </div>

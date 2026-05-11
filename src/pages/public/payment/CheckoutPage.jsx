@@ -274,7 +274,7 @@ const CheckoutPage = () => {
                 onClick={handleProceedToPayment}
                 className="w-full mt-6 py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
               >
-                Continue to Stripe Test Payment
+                Continue to Payment
               </button>
             </div>
           </div>
