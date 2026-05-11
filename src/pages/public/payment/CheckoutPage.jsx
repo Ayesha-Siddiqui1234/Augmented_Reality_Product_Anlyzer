@@ -46,6 +46,8 @@ const CheckoutPage = () => {
     city: '',
   })
 
+  const [paymentMethod, setPaymentMethod] = useState('online') // 'online' or 'cod'
+
   useEffect(() => {
     if (!isAuthenticated || !currentUser) {
       navigate('/login', { state: { from: '/checkout' } })
@@ -93,6 +95,26 @@ const CheckoutPage = () => {
       return
     }
 
+    // If COD is selected, navigate directly to COD success page
+    if (paymentMethod === 'cod') {
+      // Save order data for COD
+      localStorage.setItem(
+        'codOrderData',
+        JSON.stringify({
+          customer: formData,
+          items: cartItems,
+          subtotal: cartTotal,
+          tax: tax,
+          total: grandTotal,
+          paymentMethod: 'Cash on Delivery',
+          createdAt: new Date().toISOString(),
+        })
+      )
+      navigate('/cod-success')
+      return
+    }
+
+    // For online payment, proceed with existing flow
     const response = await axios.post(
       `${PAYMENT_API_URL}/simulation/create-order`,
       {
@@ -118,7 +140,7 @@ const CheckoutPage = () => {
         tax: order.tax,
         shippingFee: order.shippingFee,
         total: order.total,
-        paymentMethod: 'Stripe Simulation',
+        paymentMethod: 'Online Payment',
         createdAt: order.createdAt,
       })
     )
@@ -272,11 +294,64 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
+              {/* Payment Method Selection */}
+              <div className="mt-6 mb-6">
+                <h3 className="text-lg font-semibold mb-4">Payment Method</h3>
+                
+                <div className="space-y-3">
+                  {/* Online Payment Option */}
+                  <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    paymentMethod === 'online' 
+                      ? 'border-purple-400 bg-purple-400/10' 
+                      : 'border-purple-400/20 bg-black/20 hover:border-purple-400/40'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="online"
+                      checked={paymentMethod === 'online'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-5 h-5 text-purple-400"
+                    />
+                    <div className="flex-1">
+                      <div className="font-semibold text-purple-100">Online Payment</div>
+                      <div className="text-xs text-purple-400/60">Pay securely with card</div>
+                    </div>
+                    <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                  </label>
+
+                  {/* COD Option */}
+                  <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    paymentMethod === 'cod' 
+                      ? 'border-purple-400 bg-purple-400/10' 
+                      : 'border-purple-400/20 bg-black/20 hover:border-purple-400/40'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-5 h-5 text-purple-400"
+                    />
+                    <div className="flex-1">
+                      <div className="font-semibold text-purple-100">Cash on Delivery</div>
+                      <div className="text-xs text-purple-400/60">Pay when you receive</div>
+                    </div>
+                    <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </label>
+                </div>
+              </div>
+
               <button
                 onClick={handleProceedToPayment}
-                className="w-full mt-6 py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
+                className="w-full py-4 rounded-full bg-purple-400 text-black font-bold hover:bg-purple-300 transition"
               >
-                Continue to Payment
+                {paymentMethod === 'cod' ? 'Place Order (COD)' : 'Continue to Payment'}
               </button>
             </div>
           </div>

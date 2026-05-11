@@ -9,6 +9,7 @@ import { selectIsAuthenticated } from './features/auth/authSlice'
 import CheckoutPage from './pages/public/payment/CheckoutPage'
 import PaymentCancelPage from './pages/public/payment/PaymentCancel'
 import PaymentSuccessPage from './pages/public/payment/PaymentSuccess'
+import CODSuccessPage from './pages/public/payment/CODSuccess'
 import StripeSimulationPage from './pages/public/payment/StripeSimulation'
 import KashafNavbar from './components/Navbar'
 import ProductListPage from './pages/public/ProductListPage'
@@ -83,6 +84,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/stripe-simulation" element={<StripeSimulationPage />} />
         <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        <Route path="/cod-success" element={<CODSuccessPage />} />
         <Route path="/payment-cancel" element={<PaymentCancelPage />} />
       </Routes>
     </BrowserRouter>

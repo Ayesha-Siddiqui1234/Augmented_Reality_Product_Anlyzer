@@ -22,8 +22,9 @@ const UserLogin = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   
-  // Get redirect path from location state (if user was redirected from cart)
-  const from = location.state?.from || '/cart'
+  // Get redirect path from location state (if user was redirected from somewhere)
+  // Default to home page instead of cart
+  const from = location.state?.from || '/'
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
