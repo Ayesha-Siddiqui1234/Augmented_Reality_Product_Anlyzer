@@ -2,7 +2,7 @@
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
+import { toggleFavorite, selectIsFavorite } from '../../features/favorites/favoriteSlice'
 import { SlideButton } from '../ui/slide-button'
 
 const StarRating = ({ rating }) => {
@@ -19,9 +19,7 @@ const ProductCard = ({ product }) => {
   const dispatch    = useDispatch()
   const navigate    = useNavigate()
   
-  // TODO: Get actual userId from auth state when login is implemented
-  const userId = 'user-1' // Temporary hardcoded user
-  const isFavorited = useSelector(state => selectIsFavoriteByUser(state, userId, product.id))
+  const isFavorited = useSelector(state => selectIsFavorite(state, product._id || product.id))
 
   const hasDiscount     = product.originalPrice > product.price
   const discountPercent = hasDiscount
@@ -53,7 +51,13 @@ const ProductCard = ({ product }) => {
           )}
         </div>
         <button
-          onClick={e => { e.stopPropagation(); dispatch(toggleFavorite({ userId, productId: product.id })) }}
+          onClick={e => { 
+            e.stopPropagation(); 
+            dispatch(toggleFavorite({ 
+              productId: product._id || product.id,
+              product: product
+            })) 
+          }}
           aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
           className={`
             absolute top-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center

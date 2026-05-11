@@ -85,22 +85,50 @@ export const removeFromFavorites = createAsyncThunk(
   }
 )
 
-// Toggle favorite (add or remove)
+// Toggle favorite (add or remove) with optimistic updates
 export const toggleFavorite = createAsyncThunk(
   'favorites/toggleFavorite',
-  async ({ productId }, thunkAPI) => {
+  async ({ productId, product }, thunkAPI) => {
     try {
       const state = thunkAPI.getState()
-      const isFavorite = state.favorites.items.some(
+      const favoriteItem = state.favorites.items.find(
         fav => (fav.product?._id || fav.product?.id) === productId
       )
+      const isFavorite = !!favoriteItem
 
       if (isFavorite) {
-        await thunkAPI.dispatch(removeFromFavorites(productId))
-        return { action: 'removed', productId }
+        // Optimistically remove from UI immediately
+        thunkAPI.dispatch(optimisticRemoveFavorite(productId))
+        
+        try {
+          // Then make the API call
+          await thunkAPI.dispatch(removeFromFavorites(productId)).unwrap()
+          return { action: 'removed', productId }
+        } catch (error) {
+          // Rollback on error - restore the item
+          thunkAPI.dispatch(rollbackOptimisticUpdate({ 
+            productId, 
+            wasAdding: false, 
+            previousItem: favoriteItem 
+          }))
+          throw error
+        }
       } else {
-        await thunkAPI.dispatch(addToFavorites(productId))
-        return { action: 'added', productId }
+        // Optimistically add to UI immediately
+        thunkAPI.dispatch(optimisticAddFavorite({ productId, product }))
+        
+        try {
+          // Then make the API call
+          await thunkAPI.dispatch(addToFavorites(productId)).unwrap()
+          return { action: 'added', productId }
+        } catch (error) {
+          // Rollback on error - remove the optimistic item
+          thunkAPI.dispatch(rollbackOptimisticUpdate({ 
+            productId, 
+            wasAdding: true 
+          }))
+          throw error
+        }
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message)
@@ -118,6 +146,36 @@ const favoritesSlice = createSlice({
   reducers: {
     clearFavoriteError: (state) => {
       state.error = null
+    },
+    // Optimistic add - immediately add to UI
+    optimisticAddFavorite: (state, action) => {
+      const { productId, product } = action.payload
+      // Add temporary favorite item
+      state.items.push({
+        product: product || { _id: productId, id: productId },
+        _id: `temp-${productId}`,
+        isOptimistic: true
+      })
+    },
+    // Optimistic remove - immediately remove from UI
+    optimisticRemoveFavorite: (state, action) => {
+      const productId = action.payload
+      state.items = state.items.filter(
+        fav => (fav.product?._id || fav.product?.id) !== productId
+      )
+    },
+    // Rollback optimistic update on error
+    rollbackOptimisticUpdate: (state, action) => {
+      const { productId, wasAdding, previousItem } = action.payload
+      if (wasAdding) {
+        // Remove the optimistic item
+        state.items = state.items.filter(
+          fav => (fav.product?._id || fav.product?.id) !== productId
+        )
+      } else if (previousItem) {
+        // Restore the removed item
+        state.items.push(previousItem)
+      }
     },
   },
   extraReducers: (builder) => {
@@ -138,11 +196,21 @@ const favoritesSlice = createSlice({
 
       // Add to favorites
       .addCase(addToFavorites.pending, (state) => {
-        state.loading = true
+        // Don't set loading to true - we're using optimistic updates
       })
       .addCase(addToFavorites.fulfilled, (state, action) => {
         state.loading = false
-        state.items.push(action.payload)
+        // Replace optimistic item with real data from server
+        const productId = action.payload.product?._id || action.payload.product?.id
+        const optimisticIndex = state.items.findIndex(
+          fav => fav.isOptimistic && (fav.product?._id || fav.product?.id) === productId
+        )
+        if (optimisticIndex !== -1) {
+          state.items[optimisticIndex] = action.payload
+        } else {
+          // If not found, just add it
+          state.items.push(action.payload)
+        }
       })
       .addCase(addToFavorites.rejected, (state, action) => {
         state.loading = false
@@ -151,10 +219,11 @@ const favoritesSlice = createSlice({
 
       // Remove from favorites
       .addCase(removeFromFavorites.pending, (state) => {
-        state.loading = true
+        // Don't set loading to true - we're using optimistic updates
       })
       .addCase(removeFromFavorites.fulfilled, (state, action) => {
         state.loading = false
+        // Already removed optimistically, just ensure it's gone
         state.items = state.items.filter(
           fav => (fav.product?._id || fav.product?.id) !== action.payload
         )
@@ -166,7 +235,7 @@ const favoritesSlice = createSlice({
   },
 })
 
-export const { clearFavoriteError } = favoritesSlice.actions
+export const { clearFavoriteError, optimisticAddFavorite, optimisticRemoveFavorite, rollbackOptimisticUpdate } = favoritesSlice.actions
 
 export default favoritesSlice.reducer
 

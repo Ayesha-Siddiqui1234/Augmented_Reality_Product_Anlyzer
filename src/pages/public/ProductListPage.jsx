@@ -38,7 +38,10 @@ const ProductCard = ({ product }) => {
     }
 
     try {
-      await dispatch(toggleFavorite({ productId: product._id || product.id })).unwrap()
+      await dispatch(toggleFavorite({ 
+        productId: product._id || product.id,
+        product: product // Pass the full product for optimistic update
+      })).unwrap()
     } catch (error) {
       console.error('Failed to toggle favorite:', error)
     }

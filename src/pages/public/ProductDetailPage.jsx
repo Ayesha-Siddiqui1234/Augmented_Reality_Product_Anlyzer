@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProductBySlug, selectRelatedProducts } from '../../features/products/productSlice'
-import { toggleFavorite, selectIsFavoriteByUser } from '../../features/favorites/favoriteSlice'
+import { toggleFavorite, selectIsFavorite } from '../../features/favorites/favoriteSlice'
 import { addProductToCart } from '../../features/cart/cartSlice'
 import Navbar from '../../components/Navbar'
 /* ─── hook: intersection observer for reveal animations ─── */
@@ -29,12 +29,11 @@ const ProductDetailPage = () => {
   
   const product = useSelector(state => selectProductBySlug(state, slug))
   const relatedProducts = useSelector(state => 
-    product ? selectRelatedProducts(state, product.id, product.category) : []
+    product ? selectRelatedProducts(state, product._id || product.id, product.category) : []
   )
   
-  const userId = 'user-1' // TODO: Get from auth
   const isFavorited = useSelector(state => 
-    product ? selectIsFavoriteByUser(state, userId, product.id) : false
+    product ? selectIsFavorite(state, product._id || product.id) : false
   )
 
   const [selectedImage, setSelectedImage] = useState(0)
@@ -83,7 +82,10 @@ const ProductDetailPage = () => {
   }
 
   const handleToggleFavorite = () => {
-    dispatch(toggleFavorite({ userId, productId: product.id }))
+    dispatch(toggleFavorite({ 
+      productId: product._id || product.id,
+      product: product
+    }))
   }
 
   return (

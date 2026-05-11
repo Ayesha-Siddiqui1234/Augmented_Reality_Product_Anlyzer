@@ -182,7 +182,7 @@ const normalizeProduct = (product) => {
 
     // Your backend model currently does not have arSupported/modelUrl.
     // These are safe fallbacks for your UI.
-    arSupported: product.arSupported || Boolean(product.modelUrl || product.glbModel),
+    arSupported: product.arEnabled || product.arSupported || Boolean(product.modelUrl || product.glbModel),
     modelUrl: product.modelUrl || product.glbModel || '',
     glbModel: product.glbModel || product.modelUrl || '',
 

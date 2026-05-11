@@ -446,11 +446,8 @@ export default function Navbar({ activePage = "home" }) {
 
   const userId = currentUser?._id || currentUser?.id;
 
-  const favCount = useSelector((s) =>
-    userId
-      ? s.favorites.items.filter((f) => f.userId === userId).length
-      : 0
-  );
+  // Count all favorites (backend already filters by authenticated user)
+  const favCount = useSelector((s) => s.favorites.items.length);
 
   const currentPage =
     location.pathname === "/"
@@ -489,39 +486,6 @@ export default function Navbar({ activePage = "home" }) {
     await dispatch(logoutUser());
     navigate("/login");
   };
-
-  const productCategories = [
-    {
-      label: "All Products",
-      icon: "grid",
-      color: "rgba(153, 85, 255, 0.16)",
-      iconColor: "#aa77ff",
-      onClick: () => {
-        navigate("/products");
-        setOpenDropdown(null);
-      },
-    },
-    {
-      label: "New Arrivals",
-      icon: "star",
-      color: "rgba(153, 85, 255, 0.16)",
-      iconColor: "#aa77ff",
-      onClick: () => {
-        navigate("/products");
-        setOpenDropdown(null);
-      },
-    },
-    {
-      label: "Featured",
-      icon: "heart",
-      color: "rgba(153, 85, 255, 0.16)",
-      iconColor: "#aa77ff",
-      onClick: () => {
-        navigate("/products");
-        setOpenDropdown(null);
-      },
-    },
-  ];
 
   const userLinks = isAuthenticated
     ? [
@@ -592,41 +556,13 @@ export default function Navbar({ activePage = "home" }) {
 
             <li className="fnb-nav-item" role="none">
               <button
-                className={`fnb-nav-link${openDropdown === "products" ? " open" : ""}${currentPage === "products" ? " active" : ""}`}
-                onClick={() => toggle("products")}
-                aria-haspopup="true"
-                aria-expanded={openDropdown === "products"}
+                onClick={() => navigate("/products")}
+                className={`fnb-nav-link${currentPage === "products" ? " active" : ""}`}
                 role="menuitem"
               >
                 <NavIcon type="products" />
-                Products
-                <NavIcon type="chevron" />
+                All Products
               </button>
-
-              <div
-                className={`fnb-dropdown${openDropdown === "products" ? " open" : ""}`}
-                role="menu"
-              >
-                {productCategories.map((item) => (
-                  <button
-                    key={item.label}
-                    className="fnb-dropdown-item"
-                    role="menuitem"
-                    onClick={item.onClick}
-                  >
-                    <span
-                      className="fnb-dropdown-icon"
-                      style={{
-                        background: item.color,
-                        color: item.iconColor,
-                      }}
-                    >
-                      <NavIcon type={item.icon} />
-                    </span>
-                    {item.label}
-                  </button>
-                ))}
-              </div>
             </li>
 
             <li className="fnb-nav-item" role="none">

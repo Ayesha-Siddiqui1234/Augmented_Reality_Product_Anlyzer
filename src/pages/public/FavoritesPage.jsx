@@ -26,7 +26,10 @@ const ProductCard = ({ product }) => {
   const handleToggleFavorite = async (e) => {
     e.stopPropagation()
     try {
-      await dispatch(toggleFavorite({ productId: product._id || product.id })).unwrap()
+      await dispatch(toggleFavorite({ 
+        productId: product._id || product.id,
+        product: product // Pass the full product for optimistic update
+      })).unwrap()
     } catch (error) {
       console.error('Failed to toggle favorite:', error)
     }
@@ -121,7 +124,10 @@ const FavoritesPage = () => {
   const removeAll = async () => {
     // Remove all favorites one by one
     for (const product of favoriteProducts) {
-      await dispatch(toggleFavorite({ productId: product._id || product.id }))
+      await dispatch(toggleFavorite({ 
+        productId: product._id || product.id,
+        product: product
+      }))
     }
   }
 
