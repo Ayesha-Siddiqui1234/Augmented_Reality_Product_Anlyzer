@@ -349,11 +349,122 @@ const styles = `
     animation: fnb-fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   }
 
+  .fnb-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 3;
+  }
+
+  .fnb-hamburger span {
+    width: 22px;
+    height: 2px;
+    background: #aa77ff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .fnb-hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+
+  .fnb-hamburger.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .fnb-hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+
   @media (max-width: 768px) {
-    .fnb-inner { padding: 0 16px; }
-    .fnb-nav { gap: 0; }
-    .fnb-nav-link { padding: 8px 10px; font-size: 13px; }
-    .fnb-logo-text { display: none; }
+    .fnb-root {
+      padding: 12px 16px;
+    }
+
+    .fnb-inner {
+      padding: 0 16px;
+      height: 56px;
+    }
+
+    .fnb-logo-text {
+      display: none;
+    }
+
+    .fnb-hamburger {
+      display: flex;
+    }
+
+    .fnb-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100vh;
+      background: #09070f;
+      border-left: 1px solid rgba(153, 85, 255, 0.35);
+      flex-direction: column;
+      gap: 8px;
+      padding: 80px 20px 20px;
+      transition: right 0.3s ease;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.9);
+      overflow-y: auto;
+    }
+
+    .fnb-nav.open {
+      right: 0;
+    }
+
+    .fnb-nav-item {
+      width: 100%;
+    }
+
+    .fnb-nav-link,
+    .fnb-fav-btn {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-radius: 12px;
+    }
+
+    .fnb-user-icon-btn {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      padding: 12px 16px;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .fnb-user-icon-btn::after {
+      content: attr(title);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .fnb-dropdown {
+      position: static;
+      transform: none !important;
+      margin-top: 8px;
+      margin-left: 0;
+      width: 100%;
+      box-shadow: none;
+      border: 1px solid rgba(153, 85, 255, 0.2);
+    }
+
+    .fnb-dropdown::before {
+      display: none;
+    }
+
+    .fnb-dropdown.open {
+      transform: none !important;
+    }
   }
 `;
 
@@ -443,6 +554,7 @@ export default function Navbar({ activePage = "home" }) {
 
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
 
   const userId = currentUser?._id || currentUser?.id;
@@ -471,6 +583,7 @@ export default function Navbar({ activePage = "home" }) {
     const handleClickOutside = (e) => {
       if (navRef.current && !navRef.current.contains(e.target)) {
         setOpenDropdown(null);
+        setMobileMenuOpen(false);
       }
     };
 
@@ -482,8 +595,15 @@ export default function Navbar({ activePage = "home" }) {
     setOpenDropdown((prev) => (prev === name ? null : name));
   };
 
+  const handleNavClick = (callback) => {
+    setMobileMenuOpen(false);
+    setOpenDropdown(null);
+    callback();
+  };
+
   const handleLogout = async () => {
     setOpenDropdown(null);
+    setMobileMenuOpen(false);
     await dispatch(logoutUser());
     toast.success('Logged out successfully!');
     navigate("/login");
@@ -504,6 +624,7 @@ export default function Navbar({ activePage = "home" }) {
           icon: "login",
           onClick: () => {
             setOpenDropdown(null);
+            setMobileMenuOpen(false);
             navigate("/login");
           },
         },
@@ -512,6 +633,7 @@ export default function Navbar({ activePage = "home" }) {
           icon: "signup",
           onClick: () => {
             setOpenDropdown(null);
+            setMobileMenuOpen(false);
             navigate("/signup");
           },
         },
@@ -534,7 +656,7 @@ export default function Navbar({ activePage = "home" }) {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/");
+              handleNavClick(() => navigate("/"));
             }}
             className="fnb-logo"
             aria-label="VizCraft"
@@ -545,10 +667,21 @@ export default function Navbar({ activePage = "home" }) {
             </span>
           </a>
 
-          <ul className="fnb-nav" role="menubar">
+          <button
+            className={`fnb-hamburger${mobileMenuOpen ? " open" : ""}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <ul className={`fnb-nav${mobileMenuOpen ? " open" : ""}`} role="menubar">
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate("/")}
+                onClick={() => handleNavClick(() => navigate("/"))}
                 className={`fnb-nav-link${currentPage === "home" ? " active" : ""}`}
                 role="menuitem"
               >
@@ -559,7 +692,7 @@ export default function Navbar({ activePage = "home" }) {
 
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate("/products")}
+                onClick={() => handleNavClick(() => navigate("/products"))}
                 className={`fnb-nav-link${currentPage === "products" ? " active" : ""}`}
                 role="menuitem"
               >
@@ -572,11 +705,11 @@ export default function Navbar({ activePage = "home" }) {
               <button
                 onClick={() => {
                   if (!isAuthenticated) {
-                    navigate("/login", { state: { from: "/favorites" } });
+                    handleNavClick(() => navigate("/login", { state: { from: "/favorites" } }));
                     return;
                   }
 
-                  navigate("/favorites");
+                  handleNavClick(() => navigate("/favorites"));
                 }}
                 className={`fnb-fav-btn${currentPage === "favorites" ? " active" : ""}`}
                 aria-label={`Favorites, ${favCount} items`}
@@ -595,7 +728,7 @@ export default function Navbar({ activePage = "home" }) {
 
             <li className="fnb-nav-item" role="none">
               <button
-                onClick={() => navigate("/about")}
+                onClick={() => handleNavClick(() => navigate("/about"))}
                 className={`fnb-nav-link${currentPage === "about" ? " active" : ""}`}
                 role="menuitem"
               >
